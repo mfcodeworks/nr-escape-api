@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class NotificationController extends Controller
+class ProfileController extends Controller
 {
     /**
      * Display a listing of the resource.

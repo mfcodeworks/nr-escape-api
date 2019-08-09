@@ -22,5 +22,14 @@ Route::prefix('v1')->group(function () {
     // authorised user routes
     Route::middleware('auth:api')->group(function() {
         Route::get('me', 'AuthController@user');
+        Route::get('me/engagement', 'EngagementScoreController@get');
+        Route::get('recommendations', 'RecommendationsController@get');
+
+        Route::apiResources([
+            'profile' => 'ProfileController',
+            'post' => 'PostController',
+            'comment' => 'CommentController',
+            'notification' => 'NotificationController'
+        ]);
     });
 });
