@@ -3,98 +3,87 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Carbon\Carbon;
+use App\Http\Controllers\Controller;
 use App\User;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Validator;
 
 class AuthController extends Controller
 {
     /**
-     * Create user
+     * Handle user registration requests
      *
-     * @param  [string] name
-     * @param  [string] email
-     * @param  [string] password
-     * @param  [string] password_confirmation
-     * @return [string] message
+     * @param  Request $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function signup(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string',
-            'email' => 'required|string|email|unique:users',
-            'password' => 'required|string|confirmed'
+    public function register(Request $request) {
+        // Validate new user info
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|min:3',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|min:6'
         ]);
-        $user = new User([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($request->password)
-        ]);
-        $user->save();
-        return response()->json([
-            'message' => 'Successfully created user!'
-        ], 201);
-    }
-
-    /**
-     * Login user and create token
-     *
-     * @param  [string] email
-     * @param  [string] password
-     * @param  [boolean] remember_me
-     * @return [string] access_token
-     * @return [string] token_type
-     * @return [string] expires_at
-     */
-    public function login(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|string|email',
-            'password' => 'required|string',
-            'remember_me' => 'boolean'
-        ]);
-        $credentials = request(['email', 'password']);
-        if(!Auth::attempt($credentials)) {
+        if($validator->fails()) {
             return response()->json([
-                'message' => 'Unauthorized'
+                'error' => 'Unable to create new account, check your details',
+                'validator' => $validator->errors()
             ], 401);
         }
-        $user = $request->user();
-        $tokenResult = $user->createToken('Personal Access Token');
-        $token = $tokenResult->token;
-        if ($request->remember_me) {
-            $token->expires_at = Carbon::now()->addWeeks(1);
-            $token->save();
+
+        // Create new user with details
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password)
+        ]);
+
+        $token = $user->createToken('SocialHub')->accessToken;
+
+        // Signup success response
+        return response()->json([
+            'token' => $token,
+            'email' => $request->email,
+            'settings' => [],
+            'profile' => $user
+        ], 200);
+    }
+
+    /**
+     * Handle user login requests
+     *
+     * @param  Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function login(Request $request) {
+        // Create credentials object
+        $credentials = [
+            'name' => $request->name,
+            'password' => $request->password
+        ];
+
+        // Attempt auth
+        if (auth()->attempt($credentials)) {
+            $token = auth()->user()->createToken('SocialHub')->accessToken;
             return response()->json([
-                'access_token' => $tokenResult->accessToken,
-                'token_type' => 'Bearer',
-                'expires_at' => Carbon::parse(
-                    $tokenResult->token->expires_at
-                )->toDateTimeString()
-            ]);
+                'token' => $token,
+                'email' => auth()->user()->email,
+                'settings' => [],
+                'profile' => auth()->user()
+            ], 200);
+        // If auth fails respond with error
+        } else {
+            return response()->json(['error' => 'Incorrect username or password'], 401);
         }
     }
 
     /**
-     * Logout user (Revoke the token)
+     * Return the authenticated users details
      *
-     * @return [string] message
+     * @param  Request $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function logout(Request $request)
-    {
-        $request->user()->token()->revoke();
-        return response()->json([
-            'message' => 'Successfully logged out'
-        ]);
-    }
-
-    /**
-     * Get the authenticated User
-     *
-     * @return [json] user object
-     */
-    public function user(Request $request)
-    {
-        return response()->json($request->user());
+    public function user(Request $request) {
+        return response()->json(auth()->user(), 200);
     }
 }
