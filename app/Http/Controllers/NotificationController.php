@@ -2,19 +2,41 @@
 
 namespace App\Http\Controllers;
 
+use App\Notification;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class NotificationController extends Controller
 {
+    /**
+     * Get notifications for authenticated user
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function index(Request $request) {
+        // Return notifications for authenticated user, within the last 4 weeks
+        return response()->json(
+            auth()->user()
+                ->notifications()
+                ->where(
+                    'created_at',
+                    '>',
+                    Carbon::now()->subWeek(4)->toDateTimeString()
+                )
+                ->orderBy('created_at', 'desc'),
+            200
+        );
+    }
+
     /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
-        //
+    public function store(Request $request) {
+        // TODO: Create new notification
     }
 
     /**
@@ -23,31 +45,8 @@ class NotificationController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+    public function show($id) {
+        // Select notification by ID
+        return Notification::find($id);
     }
 }
