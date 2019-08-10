@@ -20,7 +20,7 @@ class AuthController extends Controller
     public function register(Request $request) {
         // Validate new user info
         $validator = Validator::make($request->all(), [
-            'name' => 'required|min:3',
+            'username' => 'required|min:3',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:6'
         ]);
@@ -33,7 +33,7 @@ class AuthController extends Controller
 
         // Create new user with details
         $user = User::create([
-            'name' => $request->name,
+            'username' => $request->username,
             'email' => $request->email,
             'password' => Hash::make($request->password)
         ]);
@@ -58,7 +58,7 @@ class AuthController extends Controller
     public function login(Request $request) {
         // Create credentials object
         $credentials = [
-            'name' => $request->name,
+            'username' => $request->username,
             'password' => $request->password
         ];
 
@@ -85,5 +85,25 @@ class AuthController extends Controller
      */
     public function user(Request $request) {
         return response()->json(auth()->user(), 200);
+    }
+
+    /**
+     * Update user data
+     *
+     * @param  Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function update(Request $request) {
+        // TODO: Update user info
+    }
+
+    /**
+     * Deactivate user
+     *
+     * @param  Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function deactivate(Request $request) {
+        // TODO: Deactivate user
     }
 }

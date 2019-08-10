@@ -16,20 +16,22 @@ use Illuminate\Http\Request;
 // API: v1 routes
 Route::prefix('v1')->group(function () {
     // login/signup no auth routes
-    Route::post('signup', 'AuthController@register');
-    Route::post('login', 'AuthController@login');
+    Route::post('signup', 'AuthController@register')->name('user.store');
+    Route::post('login', 'AuthController@login')->name('user.login');
 
-    // authorised user routes
+    // authorised routes
     Route::middleware('auth:api')->group(function() {
-        Route::get('me', 'AuthController@user');
-        Route::get('me/engagement', 'EngagementScoreController@get');
-        Route::get('recommendations', 'RecommendationsController@get');
+        // user routes
+        Route::get('me', 'AuthController@user')->name('user.show');
+        Route::put('me/update', 'AuthController@update')->name('user.update');
+        Route::post('me/deactivate', 'AuthController@deactivate')->name('user.destroy');
+        Route::get('me/engagement', 'EngagementScoreController@get')->name('user.engagement');
+        Route::get('me/recommendations', 'RecommendationsController@get')->name('user.recommendations');
 
-        Route::apiResources([
-            'profile' => 'ProfileController',
-            'post' => 'PostController',
-            'comment' => 'CommentController',
-            'notification' => 'NotificationController'
-        ]);
+        // resource routes
+        Route::apiResource('profile', 'Profilecontroller')->only(['show']);
+        Route::apiResource('post', 'PostController')->only(['store', 'show', 'update', 'destroy']);
+        Route::apiResource('comment', 'CommentController')->only(['store', 'show', 'update', 'destroy']);
+        Route::apiResource('notification', 'NotificationController')->only(['store', 'show', 'update', 'destroy']);
     });
 });

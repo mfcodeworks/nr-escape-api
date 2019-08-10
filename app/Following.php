@@ -4,17 +4,15 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Comment extends Model
+class Following extends Model
 {
     /**
-     * Assignable comment values
+     * Assignable following values
      *
      * @var array
      */
     protected $fillable = [
-        'author',
-        'text',
-        'media',
-        'reply_to',
+        'user',
+        'following_user'
     ];
 }

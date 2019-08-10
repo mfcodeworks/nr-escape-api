@@ -4,17 +4,15 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Comment extends Model
+class Like extends Model
 {
     /**
-     * Assignable comment values
+     * Assignable like values
      *
      * @var array
      */
     protected $fillable = [
-        'author',
-        'text',
-        'media',
-        'reply_to',
+        'post',
+        'user'
     ];
 }
