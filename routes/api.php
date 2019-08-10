@@ -22,11 +22,14 @@ Route::prefix('v1')->group(function () {
     // authorised routes
     Route::middleware('auth:api')->group(function() {
         // user routes
-        Route::get('me', 'AuthController@user')->name('user.show');
-        Route::put('me/update', 'AuthController@update')->name('user.update');
-        Route::post('me/deactivate', 'AuthController@deactivate')->name('user.destroy');
-        Route::get('me/engagement', 'EngagementScoreController@get')->name('user.engagement');
-        Route::get('me/recommendations', 'RecommendationsController@get')->name('user.recommendations');
+        Route::prefix('me')->group(function() {
+            Route::get('/', 'AuthController@user')->name('user.show');
+            Route::put('update', 'AuthController@update')->name('user.update');
+            Route::post('deactivate', 'AuthController@deactivate')->name('user.destroy');
+            Route::get('notifications', 'NotificationController@index')->name('user.notifications');
+            Route::get('engagement', 'EngagementScoreController@get')->name('user.engagement');
+            Route::get('recommendations', 'RecommendationsController@get')->name('user.recommendations');
+        });
 
         // resource routes
         Route::apiResource('profile', 'Profilecontroller')->only(['show']);
