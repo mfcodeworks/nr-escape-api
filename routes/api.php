@@ -35,6 +35,6 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('profile', 'Profilecontroller')->only(['show']);
         Route::apiResource('post', 'PostController')->only(['store', 'show', 'update', 'destroy']);
         Route::apiResource('comment', 'CommentController')->only(['store', 'show', 'update', 'destroy']);
-        Route::apiResource('notification', 'NotificationController')->only(['store', 'show', 'update', 'destroy']);
+        Route::apiResource('notification', 'NotificationController')->only(['index', 'show']);
     });
 });

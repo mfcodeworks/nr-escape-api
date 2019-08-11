@@ -36,7 +36,20 @@ class CommentController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id) {
-        // TODO: Update comment by ID
+        // Update comment by ID
+        $comment = auth()->user()->comments()->find($id);
+
+        // If no comment, comment doesn't exist or isn't owned by user
+        if (!$comment) return $this->unauthorized();
+
+        // if comment updated response success, else response with error
+        if ( $comment->fill($request->all())->save() ) {
+            return response()->json('success', 200);
+        } else {
+            return response()->json([
+                'error' => 'Comment could not be updated'
+            ], 500);
+        }
     }
 
     /**
@@ -46,6 +59,26 @@ class CommentController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function destroy($id) {
-        // TODO: Delete post by ID
+        // Delete comment by ID
+        $comment = auth()->user()->comments()->find($id);
+
+        // If no comment, comment doesn't exist or isn't owned by user
+        if (!$comment) return $this->unauthorized();
+
+        // if comment deleted response success, else response with error
+        if ( $comment->delete() ) {
+            return response()->json('success', 200);
+        } else {
+            return response()->json([
+                'error' => 'Comment could not be deleted'
+            ], 500);
+        }
+    }
+
+    // Respond with unauthorized
+    private function unauthorized() {
+        return response()->json([
+            'error' => 'Comment doesn\'t exist or not owned by user'
+        ], 400);
     }
 }
