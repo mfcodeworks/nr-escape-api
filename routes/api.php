@@ -35,6 +35,8 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('profile', 'Profilecontroller')->only(['show']);
         Route::apiResource('notification', 'NotificationController')->only(['index', 'show']);
         Route::apiResource('post', 'PostController')->only(['store', 'show', 'update', 'destroy']);
+        Route::post('post/{id}/like', 'LikesController@store');
+        Route::delete('post/{id}/like', 'LikesController@destroy');
         Route::apiResource('comment', 'CommentController')->only(['store', 'show', 'update', 'destroy']);
     });
 });
