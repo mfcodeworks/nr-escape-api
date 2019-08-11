@@ -32,7 +32,9 @@ Route::prefix('v1')->group(function () {
         });
 
         // resource routes
-        Route::apiResource('profile', 'Profilecontroller')->only(['show']);
+        Route::apiResource('profile', 'ProfileController')->only(['show'])->middleware('blocked');
+        Route::post('profile/{id}/block', 'BlockController@block');
+        Route::post('profile/{id}/unblock', 'BlockController@unblock');
         Route::apiResource('notification', 'NotificationController')->only(['index', 'show']);
         Route::apiResource('post', 'PostController')->only(['store', 'show', 'update', 'destroy']);
         Route::post('post/{id}/like', 'LikesController@store');
