@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Post;
 use Illuminate\Http\Request;
 use Validator;
+use Storage;
 
 class PostController extends Controller
 {
@@ -19,15 +20,15 @@ class PostController extends Controller
         $validator = Validator::make($request->all(), [
             'author' => 'required|exists:users,id',
             'type' => 'required|string',
-            'media' => 'string',
-            'caption' => 'string',
+            'media' => 'string|nullable',
+            'caption' => 'string|nullable',
             'repost' => 'required|boolean'
         ], [
             'author.exists' => 'Author not found'
         ]);
         if ($validator->fails()) {
             return response()->json([
-                'error' => 'Unable to create new account, check your details',
+                'error' => 'Unable to create new post',
                 'validator' => $validator->errors()
             ], 401);
         }
@@ -36,11 +37,15 @@ class PostController extends Controller
                 'error' => 'Post cannot be empty, we need a little text or something'
             ]);
         }
-        $media = $this->handleMedia($request->media);
-        if (!$media) {
-            return response()->json([
-                'error' => 'It looks like the media for this post isn\'t anything we recognize'
-            ], 400);
+
+        // If media is present, handle the media (either URL or image/video)
+        if ($request->media) {
+            $request->media = $this->handleMedia($request->media);
+            if (!$request->media) {
+                return response()->json([
+                    'error' => 'It looks like the media for this post isn\'t anything we recognize'
+                ], 400);
+            }
         }
 
         // Create new post
@@ -48,10 +53,11 @@ class PostController extends Controller
             'author' => $request->author,
             'type' => $request->type,
             'caption' => $request->caption,
-            'media' => $media, // requires validation (may be image, video, or url)
+            'media' => $request->media, // requires validation (may be image, video, or url)
             'repost' => $request->repost
         ]);
 
+        // Return post creation response
         if ($post) {
             return response()->json($post, 200);
         } else {
@@ -70,6 +76,7 @@ class PostController extends Controller
     public function show($id) {
         // Select post by ID
         return Post::find($id);
+        // TODO: Get likes, comments
     }
 
     /**
@@ -80,7 +87,7 @@ class PostController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id) {
-        // TODO: Update post by ID
+        // Update post by ID
         $post = auth()->user()->posts()->find($id);
 
         // If no post, post doesn't exist or isn't owned by user
@@ -121,22 +128,30 @@ class PostController extends Controller
 
     // Validate the post media type
     private function handleMedia($media) {
-        // Check if media is a valid base64 string
-        base64_decode($media, true) === false ? $isBase64 = true : $isBase64 = false;
-        // Check if media is a valid URL
-        filter_var($media, FILTER_VALIDATE_URL) ? $isUrl = true : $isUrl = false;
+        // Check if media is a valid base64
+        if (strpos($media, 'base64,') !== false || base64_decode($media, true) !== false) {
+            // Get file data
+            $fileData = explode(';base64,', $media);
+            // After ;base64, is the actual base64 string
+            $base64 = $fileData[1];
+            // data:{generic_type}/{extension} get extension after the /
+            $extension = explode('/', $fileData[0])[1];
 
-        switch(true) {
-            case $isUrl:
-                return $media;
-                break;
+            // Create filepath
+            $filename = uniqid() . "." . $extension;
+            $id = auth()->user()->id;
+            $mediaPath = "SocialHub/author/{$id}/posts/$filename";
 
-            case $isBase64:
-                
-                break;
+            // Save media to DigitalOcean Spaces
+            Storage::disk('spaces')->put($mediaPath, base64_decode($base64), 'public');
+            $media = Storage::disk('spaces')->url($mediaPath);
+        }
 
-            default:
-                return false;
+        // Check if media is a valid URL and return URL or false
+        if (filter_var($media, FILTER_VALIDATE_URL)) {
+            return $media;
+        } else {
+            return false;
         }
     }
 

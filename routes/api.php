@@ -33,8 +33,8 @@ Route::prefix('v1')->group(function () {
 
         // resource routes
         Route::apiResource('profile', 'Profilecontroller')->only(['show']);
+        Route::apiResource('notification', 'NotificationController')->only(['index', 'show']);
         Route::apiResource('post', 'PostController')->only(['store', 'show', 'update', 'destroy']);
         Route::apiResource('comment', 'CommentController')->only(['store', 'show', 'update', 'destroy']);
-        Route::apiResource('notification', 'NotificationController')->only(['index', 'show']);
     });
 });
