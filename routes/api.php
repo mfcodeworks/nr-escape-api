@@ -27,8 +27,8 @@ Route::prefix('v1')->group(function () {
             Route::put('update', 'AuthController@update')->name('user.update');
             Route::post('deactivate', 'AuthController@deactivate')->name('user.destroy');
             Route::get('notifications', 'NotificationController@index')->name('user.notifications');
-            Route::get('engagement', 'EngagementScoreController@get')->name('user.engagement');
-            Route::get('recommendations', 'RecommendationsController@get')->name('user.recommendations');
+            Route::get('engagement', 'EngagementScoreController')->name('user.engagement');
+            Route::get('recommendations', 'RecommendationsController')->name('user.recommendations');
         });
 
         // resource routes

@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\User;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class RecommendationsController extends Controller
 {
@@ -16,4 +18,6 @@ class RecommendationsController extends Controller
      * - order by mutual_following desc
      * - order by activity desc
      */
+
+    public function __invoke() {}
 }
