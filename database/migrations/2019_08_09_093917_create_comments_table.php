@@ -28,10 +28,10 @@ class CreateCommentsTable extends Migration
                 ->on('users')
                 ->onDelete('cascade');
 
-            // Comment references comment parent, on delete of parent delete comments
+            // Comment references post parent, on delete of parent delete comments
             $table->foreign('reply_to')
                 ->references('id')
-                ->on('comments')
+                ->on('posts')
                 ->onDelete('cascade');
         });
     }

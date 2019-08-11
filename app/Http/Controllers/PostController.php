@@ -22,7 +22,8 @@ class PostController extends Controller
             'type' => 'required|string',
             'media' => 'string|nullable',
             'caption' => 'string|nullable',
-            'repost' => 'required|boolean'
+            'repost' => 'required|boolean',
+            'repost_of' => 'integer|nullable'
         ], [
             'author.exists' => 'Author not found'
         ]);
@@ -30,7 +31,7 @@ class PostController extends Controller
             return response()->json([
                 'error' => 'Unable to create new post',
                 'validator' => $validator->errors()
-            ], 401);
+            ], 400);
         }
         if (!$request->caption && !$request->media && !$request->repost) {
             return response()->json([
@@ -54,12 +55,13 @@ class PostController extends Controller
             'type' => $request->type,
             'caption' => $request->caption,
             'media' => $request->media, // requires validation (may be image, video, or url)
-            'repost' => $request->repost
+            'repost' => $request->repost,
+            'repost_of' => $request->repost_of
         ]);
 
         // Return post creation response
         if ($post) {
-            return response()->json($post, 200);
+            return response()->json($post, 201);
         } else {
             return response()->json([
                 'error' => 'Failed to create post'
@@ -76,7 +78,6 @@ class PostController extends Controller
     public function show($id) {
         // Select post by ID
         return Post::find($id);
-        // TODO: Get likes, comments
     }
 
     /**
@@ -95,7 +96,7 @@ class PostController extends Controller
 
         // if post updated response success, else response with error
         if ( $post->fill($request->all())->save() ) {
-            return response()->json('success', 200);
+            return response()->json($post, 201);
         } else {
             return response()->json([
                 'error' => 'Post could not be updated'
@@ -118,7 +119,7 @@ class PostController extends Controller
 
         // if post deleted response success, else response with error
         if ($post->delete()) {
-            return response()->json('success', 200);
+            return response()->json('success', 204);
         } else {
             return response()->json([
                 'error' => 'Post could not be deleted'
@@ -159,6 +160,6 @@ class PostController extends Controller
     private function unauthorized() {
         return response()->json([
             'error' => 'Post doesn\'t exist or not owned by user'
-        ], 400);
+        ], 401);
     }
 }

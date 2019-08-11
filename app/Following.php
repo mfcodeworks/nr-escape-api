@@ -19,11 +19,21 @@ class Following extends Model
         'following_user'
     ];
 
+    /**
+     * The related objects that should be included
+     *
+     * @var array
+     */
+    protected $with = [
+        'user',
+        'followingUser'
+    ];
+
     public function user() {
-        return $this->belongsTo('App\User', 'user');
+        return $this->belongsTo('App\User', 'user')->without('recentPosts', 'following', 'followers');
     }
 
-    public function following() {
-        return $this->belongsTo('App\User', 'following_user');
+    public function followingUser() {
+        return $this->belongsTo('App\User', 'following_user')->without('recentPosts', 'following', 'followers');
     }
 }

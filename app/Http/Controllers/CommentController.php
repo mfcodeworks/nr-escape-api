@@ -51,12 +51,12 @@ class CommentController extends Controller
             'author' => $request->author,
             'text' => $request->text,
             'media' => $request->media, // requires validation (may be image, video, or url)
-            'reply_to' => $request->replyTo
+            'reply_to' => $request->reply_to
         ]);
 
         // Return comment creation response
         if ($comment) {
-            return response()->json($comment, 200);
+            return response()->json($comment, 201);
         } else {
             return response()->json([
                 'error' => 'Failed to create post'
@@ -91,7 +91,7 @@ class CommentController extends Controller
 
         // if comment updated response success, else response with error
         if ( $comment->fill($request->all())->save() ) {
-            return response()->json('success', 200);
+            return response()->json($comment, 201);
         } else {
             return response()->json([
                 'error' => 'Comment could not be updated'
@@ -114,7 +114,7 @@ class CommentController extends Controller
 
         // if comment deleted response success, else response with error
         if ( $comment->delete() ) {
-            return response()->json('success', 200);
+            return response()->json('success', 204);
         } else {
             return response()->json([
                 'error' => 'Comment could not be deleted'
@@ -155,6 +155,6 @@ class CommentController extends Controller
     private function unauthorized() {
         return response()->json([
             'error' => 'Comment doesn\'t exist or not owned by user'
-        ], 400);
+        ], 401);
     }
 }

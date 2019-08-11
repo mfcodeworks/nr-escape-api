@@ -18,11 +18,20 @@ class Comment extends Model
         'reply_to',
     ];
 
-    public function user() {
-        return $this->belongsTo('App\User', 'author');
+    /**
+     * The related objects that should be included
+     *
+     * @var array
+     */
+    protected $with = [
+        'author'
+    ];
+
+    public function author() {
+        return $this->belongsTo('App\User', 'author')->without('recentPosts');
     }
 
     public function post() {
-        return $this->belongsTo('App\User', 'reply_to');
+        return $this->belongsTo('App\Post', 'reply_to')->without('recentComments', 'author');
     }
 }

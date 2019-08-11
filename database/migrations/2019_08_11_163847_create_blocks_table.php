@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateLikesTable extends Migration
+class CreateBlocksTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,21 +13,20 @@ class CreateLikesTable extends Migration
      */
     public function up()
     {
-        Schema::create('likes', function (Blueprint $table) {
-            // Like values
+        Schema::create('blocks', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('post');
             $table->unsignedBigInteger('user');
+            $table->unsignedBigInteger('blocked_user');
             $table->timestamps();
 
-            // Like references parent post, on post delete remove like
-            $table->foreign('post')
+            // Block references owner user, on user delete remove block
+            $table->foreign('user')
                 ->references('id')
-                ->on('posts')
+                ->on('users')
                 ->onDelete('cascade');
 
-            // Like references owner user, on user delete remove like
-            $table->foreign('user')
+            // Block references blocked user, on user delete remove block
+            $table->foreign('blocked_user')
                 ->references('id')
                 ->on('users')
                 ->onDelete('cascade');
@@ -41,6 +40,6 @@ class CreateLikesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('likes');
+        Schema::dropIfExists('blocks');
     }
 }

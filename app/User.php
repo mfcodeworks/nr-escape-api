@@ -27,6 +27,28 @@ class User extends Authenticatable
     ];
 
     /**
+     * The related objects that should be included
+     *
+     * @var array
+     */
+    protected $with = [
+        'recentPosts',
+        'following',
+        'followers'
+    ];
+
+    /**
+     * The related object count that should be included
+     *
+     * @var array
+     */
+    protected $withCount = [
+        'posts',
+        'followers',
+        'following'
+    ];
+
+    /**
      * The attributes that should be hidden for arrays.
      *
      * @var array
@@ -58,6 +80,13 @@ class User extends Authenticatable
         return $this->hasMany('App\Post', 'author');
     }
 
+    // Return recent posts by user
+    public function recentPosts() {
+        return $this->hasMany('App\Post', 'author')
+            ->orderBy('updated_at', 'desc')
+            ->limit(env('USER_POST_LIMIT', 15));
+    }
+
     // Return comments by this user
     public function comments() {
         return $this->hasMany('App\Comment', 'author');
@@ -76,5 +105,15 @@ class User extends Authenticatable
     // Return this users followers
     public function followers() {
         return $this->hasMany('App\Following', 'following_user');
+    }
+
+    // Return blocks by this user
+    public function blocks() {
+        return $this->hasMany('App\Block', 'user');
+    }
+
+    // Return block of this user
+    public function blockedBy() {
+        return $this->hasMany('App\Block', 'blocked_user');
     }
 }

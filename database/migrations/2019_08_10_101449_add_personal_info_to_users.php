@@ -34,7 +34,7 @@ class AddPersonalInfoToUsers extends Migration
             $table->renameColumn('username', 'name');
             $table->dropColumn('profile_pic');
             $table->dropColumn('bio');
-            $table->dropColumn('contactInfo');
+            $table->dropColumn('contact_info');
             $table->dropColumn('settings');
         });
     }

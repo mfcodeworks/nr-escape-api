@@ -28,7 +28,7 @@ class AuthController extends Controller
             return response()->json([
                 'error' => 'Unable to create new account, check your details',
                 'validator' => $validator->errors()
-            ], 401);
+            ], 400);
         }
 
         // Create new user with details
@@ -46,7 +46,7 @@ class AuthController extends Controller
             'email' => $request->email,
             'settings' => [],
             'profile' => $user
-        ], 200);
+        ], 201);
     }
 
     /**
@@ -70,7 +70,7 @@ class AuthController extends Controller
                 'email' => auth()->user()->email,
                 'settings' => [],
                 'profile' => auth()->user()
-            ], 200);
+            ], 201);
         // If auth fails respond with error
         } else {
             return response()->json(['error' => 'Incorrect username or password'], 401);
@@ -84,7 +84,7 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function user(Request $request) {
-        return response()->json(auth()->user(), 200);
+        return auth()->user();
     }
 
     /**
