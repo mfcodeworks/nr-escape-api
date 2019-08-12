@@ -22,8 +22,7 @@ class User extends Authenticatable
         'password',
         'bio',
         'contact_info',
-        'settings',
-        'banned_until'
+        'settings'
     ];
     protected $attributes = [
         'profile_pic' => 'https://glamsquad.sgp1.cdn.digitaloceanspaces.com/SocialHub/default/images/profile.svg',
@@ -72,6 +71,7 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'banned_until' => 'datetime'
     ];
 
     // Return notifications for this user

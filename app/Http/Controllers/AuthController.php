@@ -64,13 +64,22 @@ class AuthController extends Controller
 
         // Attempt auth
         if (auth()->attempt($credentials)) {
+            // Remove deactivated response from user
+            $user = auth()->user();
+            $user->deactivated = 0;
+            $user->save();
+
+            // Create JWT for access
             $token = auth()->user()->createToken('SocialHub')->accessToken;
+
+            // Return successful response
             return response()->json([
                 'token' => $token,
                 'email' => auth()->user()->email,
                 'settings' => [],
                 'profile' => auth()->user()
             ], 201);
+
         // If auth fails respond with error
         } else {
             return response()->json(['error' => 'Incorrect username or password'], 401);
@@ -119,6 +128,19 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function deactivate(Request $request) {
-        // TODO: Deactivate user
+        // Get authenticated user
+        $user = auth()->user();
+
+        // Set deactivated status
+        $user->deactivated = 1;
+
+        // Save updated object
+        if ($user->save()) {
+            return response()->json('success', 204);
+        } else {
+            return response()->json([
+                'error' => 'Couldn\'t update user account'
+            ], 500);
+        }
     }
 }

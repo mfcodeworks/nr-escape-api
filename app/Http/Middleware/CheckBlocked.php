@@ -14,22 +14,31 @@ class CheckBlocked
      * @param  \Closure  $next
      * @return mixed
      */
-    public function handle($request, Closure $next)
-    {
+    public function handle($request, Closure $next) {
+        // Instantiate variable to check
+        $check = 0;
+
         // Get response from controller
         $response = $next($request);
 
-        // Check for existing profile block
+        // Get response body
         $body = json_decode($response->getOriginalContent(), true);
 
-        $block = auth()->user()
-            ->blocks
-            ->where('blocked_user', $body['id'])
-            ->first();
+        // Switch route to check variables
+        switch ($request->route()->getName()) {
+            case 'profile.show':
+                $check = $body['id'];
+                break;
+            case 'post.show':
+            default:
+                $check = $body['author']['id'];
+                break;
+        }
 
+        // Check if user has blocked, or been blocked, by profile
         if (
-            auth()->user()->blocks->where('blocked_user', $body['id'])->first() ||
-            User::find($body['id'])->blocks->where('blocked_user', auth()->user()->id)->first()
+            auth()->user()->blocks->where('blocked_user', $check)->first() ||
+            User::find($check)->blocks->where('blocked_user', auth()->user()->id)->first()
         ) {
             return response()->json([
                 'error' => 'Profile has been blocked'

@@ -22,7 +22,7 @@ Route::prefix('v1')->group(function () {
     Route::post('reset', 'Auth\ResetPasswordController@reset')->name('user.reset');
 
     // authorised routes
-    Route::middleware('auth:api')->group(function() {
+    Route::middleware(['auth:api', 'user.status'])->group(function() {
         // user routes
         Route::prefix('me')->group(function() {
             Route::get('/', 'AuthController@user')->name('user.show');
@@ -38,7 +38,7 @@ Route::prefix('v1')->group(function () {
         Route::post('profile/{id}/block', 'BlockController@block');
         Route::post('profile/{id}/unblock', 'BlockController@unblock');
         Route::apiResource('notification', 'NotificationController')->only(['index', 'show']);
-        Route::apiResource('post', 'PostController')->only(['store', 'show', 'update', 'destroy']);
+        Route::apiResource('post', 'PostController')->only(['store', 'show', 'update', 'destroy'])->middleware('blocked');
         Route::post('post/{id}/like', 'LikesController@store');
         Route::delete('post/{id}/like', 'LikesController@destroy');
         Route::apiResource('comment', 'CommentController')->only(['store', 'show', 'update', 'destroy']);
