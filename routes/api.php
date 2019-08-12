@@ -31,12 +31,14 @@ Route::prefix('v1')->group(function () {
             Route::get('notifications', 'NotificationController@index')->name('user.notifications');
             Route::get('engagement', 'EngagementScoreController')->name('user.engagement');
             Route::get('recommendations', 'RecommendationsController')->name('user.recommendations');
+            Route::get('feed', 'FeedController')->name('user.feed');
         });
 
         // resource routes
         Route::apiResource('profile', 'ProfileController')->only(['show'])->middleware('blocked');
-        Route::post('profile/{id}/block', 'BlockController@block');
-        Route::post('profile/{id}/unblock', 'BlockController@unblock');
+        Route::post('profile/{id}/block', 'BlockController@block')->name('profile.block');
+        Route::post('profile/{id}/unblock', 'BlockController@unblock')->name('profile.unblock');
+        Route::post('profile/{id}/report', 'ReportController')->name('profile.report');
         Route::apiResource('notification', 'NotificationController')->only(['index', 'show']);
         Route::apiResource('post', 'PostController')->only(['store', 'show', 'update', 'destroy'])->middleware('blocked');
         Route::post('post/{id}/like', 'LikesController@store');
