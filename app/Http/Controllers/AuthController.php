@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Validator;
@@ -94,7 +94,22 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function update(Request $request) {
-        // TODO: Update user info
+        // If updating password, hash new password
+        if ($request->password) {
+            $request->password = Hash::make($request->password);
+        }
+
+        // Get authorised user account
+        $user = auth()->user();
+
+        // Save user info
+        if ( $user->fill($request->all())->save() ) {
+            return response()->json($post, 201);
+        } else {
+            return response()->json([
+                'error' => 'User could not be updated'
+            ], 500);
+        }
     }
 
     /**

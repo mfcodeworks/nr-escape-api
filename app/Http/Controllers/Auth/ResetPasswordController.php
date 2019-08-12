@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ResetsPasswords;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Password;
 
 class ResetPasswordController extends Controller
 {
@@ -35,5 +37,29 @@ class ResetPasswordController extends Controller
     public function __construct()
     {
         $this->middleware('guest');
+    }
+
+    /**
+     * Handle user password reset requests
+     *
+     * @param  Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function reset(Request $request) {
+        // Reset users password
+        $response = $this->broker()->reset(
+            $request->all(), function ($user, $password) {
+                $this->resetPassword($user, $password);
+            }
+        );
+
+        // Check password reset response and return
+        if ($response === Password::PASSWORD_RESET) {
+            return response()->json('success', 204);
+        } else {
+            return response()->json([
+                'error' => ['email' => trans($response)]
+            ], 400);
+        }
     }
 }

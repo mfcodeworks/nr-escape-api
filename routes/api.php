@@ -18,6 +18,8 @@ Route::prefix('v1')->group(function () {
     // login/signup no auth routes
     Route::post('signup', 'AuthController@register')->name('user.store');
     Route::post('login', 'AuthController@login')->name('user.login');
+    Route::post('forgot', 'Auth\ForgotPasswordController@forgot')->name('user.forgot');
+    Route::post('reset', 'Auth\ResetPasswordController@reset')->name('user.reset');
 
     // authorised routes
     Route::middleware('auth:api')->group(function() {
