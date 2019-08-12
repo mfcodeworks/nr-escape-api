@@ -20,10 +20,14 @@ class User extends Authenticatable
         'username',
         'email',
         'password',
-        'profile_pic',
         'bio',
         'contact_info',
-        'settings'
+        'settings',
+        'banned_until'
+    ];
+    protected $attributes = [
+        'profile_pic' => 'https://glamsquad.sgp1.cdn.digitaloceanspaces.com/SocialHub/default/images/profile.svg',
+        'deactivated' => 0
     ];
 
     /**

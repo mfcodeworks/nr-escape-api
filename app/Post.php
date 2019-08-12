@@ -13,11 +13,13 @@ class Post extends Model
      */
     protected $fillable = [
         'author',
-        'type',
         'media',
         'caption',
-        'repost',
         'repost_of'
+    ];
+    protected $attributes = [
+        'type' => 'text',
+        'repost' => 0,
     ];
 
     /**
