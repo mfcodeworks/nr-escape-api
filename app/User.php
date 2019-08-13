@@ -111,6 +111,11 @@ class User extends Authenticatable
         return $this->hasMany('App\Following', 'following_user');
     }
 
+    // Return the reports this user has made
+    public function reports() {
+        return $this->hasMany('App\Report', 'author');
+    }
+
     // Return blocks by this user
     public function blocks() {
         return $this->hasMany('App\Block', 'user');

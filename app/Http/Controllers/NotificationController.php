@@ -21,7 +21,7 @@ class NotificationController extends Controller
             ->where(
                 'created_at',
                 '>',
-                Carbon::now()->subWeek(4)->toDateTimeString()
+                Carbon::now()->subWeeks(4)->toDateTimeString()
             )
             ->orderBy('created_at', 'desc');
     }
