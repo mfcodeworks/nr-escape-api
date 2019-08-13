@@ -16,6 +16,17 @@ class Like extends Model
         'user'
     ];
 
+    /**
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array
+     */
+    protected $hidden = [
+        'id',
+        'created_at',
+        'updated_at',
+    ];
+
     public function post() {
         return $this->belongsTo('App\Post', 'post');
     }

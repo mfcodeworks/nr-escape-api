@@ -93,7 +93,15 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function user(Request $request) {
-        return auth()->user();
+        // Get authenticated user
+        $user = auth()->user()->toArray();
+
+        // Fill in hidden data for authenticated user to view
+        $user['settings'] = auth()->user()->settings;
+        $user['email'] = auth()->user()->email;
+
+        // Return user with hidden data
+        return response()->json($user);
     }
 
     /**

@@ -15,11 +15,9 @@ class Post extends Model
         'author',
         'media',
         'caption',
-        'repost_of'
-    ];
-    protected $attributes = [
-        'type' => 'text',
-        'repost' => 0,
+        'repost_of',
+        'type',
+        'repost'
     ];
 
     /**
@@ -43,7 +41,16 @@ class Post extends Model
     protected $withCount = [
         'likes',
         'comments',
-        //'reposts' DEBUG: cannot count reposts
+        //'reposts' // DEBUG: cannot count reposts, memory leak
+    ];
+
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'repost' => 'boolean',
     ];
 
     public function author() {
@@ -66,13 +73,12 @@ class Post extends Model
     }
 
     public function reposts() {
-        return $this->hasMany(self::class, 'repost_of')
-            ->where('repost', 1)
-            ->without('recentComments', 'reposts');
+        return $this->hasMany('App\Post', 'repost_of', 'id')
+            ->without('recentComments', 'reposts', 'repostOf');
     }
 
     public function repostOf() {
-        return $this->belongsTo(self::class, 'repost')
-            ->without('recentComments', 'reposts');
+        return $this->belongsTo('App\Post', 'repost_of', 'id')
+            ->without('recentComments', 'reposts', 'repostOf');
     }
 }

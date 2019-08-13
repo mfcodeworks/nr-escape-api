@@ -20,12 +20,24 @@ class Following extends Model
     ];
 
     /**
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array
+     */
+    protected $hidden = [
+        'id',
+        'created_at',
+        'updated_at',
+    ];
+
+
+    /**
      * The related objects that should be included
      *
      * @var array
      */
 
-    public function user() {
+    public function author() {
         return $this->belongsTo('App\User', 'user')->without('recentPosts', 'following', 'followers');
     }
 

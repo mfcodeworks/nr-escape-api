@@ -57,6 +57,10 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
+        'settings',
+        'email',
+        'deactivated',
+        'banned_until',
         'password',
         'remember_token',
         'created_at',
@@ -71,7 +75,8 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'banned_until' => 'datetime'
+        'banned_until' => 'datetime',
+        'settings' => 'array'
     ];
 
     // Return notifications for this user

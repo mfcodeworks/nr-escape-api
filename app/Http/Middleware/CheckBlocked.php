@@ -29,6 +29,11 @@ class CheckBlocked
             case 'profile.show':
                 $check = $body['id'];
                 break;
+            case 'post.store':
+            case 'post.update':
+            case 'post.destroy':
+                return $response;
+                break;
             case 'post.show':
             default:
                 $check = $body['author']['id'];
