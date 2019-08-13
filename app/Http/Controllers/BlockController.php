@@ -44,6 +44,13 @@ class BlockController extends Controller
             'user' => $request->user
         ]);
 
+        // If user was previously following profile, remove the follow
+        auth()->user()
+            ->following
+            ->where('following_user', $id)
+            ->first()
+            ->delete();
+
         // Return block creation response
         if ($block) {
             return response()->json($block, 201);
