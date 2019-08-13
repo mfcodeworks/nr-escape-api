@@ -21,10 +21,20 @@ class NotificationController extends Controller
             ->where(
                 'created_at',
                 '>',
-                Carbon::now()->subWeeks(4)->toDateTimeString()
+                Carbon::now()->subWeeks(env('USER_NOTIFICATIONS_PERIOD', 30))->toDateTimeString()
             )
             ->orderBy('created_at', 'desc');
     }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * // TODO: Create a notification on post like, post comment, post repost, new follower, new @mention
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request) {}
 
     /**
      * Display the specified resource.
