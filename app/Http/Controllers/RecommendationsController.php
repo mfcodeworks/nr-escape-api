@@ -14,8 +14,8 @@ class RecommendationsController extends Controller
      *
      * Suggest recommendations based on mutual following.
      * - Select user ID
-     * - where count(posts in last 6 months) as activity > 1 post per month (6)
-     * - where count(user following and this.user following overlap) as mutual_following
+     * - where count(posts in last 1 year) as activity > 10 posts
+     * - where count(user following and this.user following overlap) as mutual_following >= 3 mutual following
      * - order by mutual_following desc
      * - order by activity desc
      */
@@ -25,21 +25,22 @@ class RecommendationsController extends Controller
             ->select(
                 'following.user',
                 DB::Raw('count(*) as mutuals'),
-                DB::Raw('(SELECT count(id) FROM posts WHERE posts.author = following.user AND posts.created_at > DATE_SUB(now(), INTERVAL 6 MONTH)) as activity')
+                DB::Raw('(SELECT count(id) FROM posts WHERE posts.author = following.user AND posts.created_at > DATE_SUB(now(), INTERVAL '.env('RECOMMENDED_ACTIVITY_PERIOD', '1 YEAR').')) as activity'),
             )
             ->whereIn('following.following_user', auth()->user()->following->pluck('following_user'))
+            ->where('following.user', '!=', auth()->user()->id)
             ->groupBy('following.user')
-            ->having('activity', '>', env('USER_RECOMMENDED_ACTIVITY_LIMIT', 2))
+            ->havingRaw('activity > ?', [env('USER_RECOMMENDED_ACTIVITY', 10)])
+            ->havingRaw('mutuals >= ?', [env('USER_RECOMMENDED_MUTUAL', 3)])
             ->orderBy('mutuals', 'desc')
             ->orderBy('activity', 'desc')
             ->get();
 
+        // Transform userID to user object
         foreach ($list as $result) {
             $recommendations[] = User::find($result->user);
         }
 
-        // TODO: Transform userID to user object
-
-        return response()->json($recommendations);
+        return response()->json($list);
     }
 }
