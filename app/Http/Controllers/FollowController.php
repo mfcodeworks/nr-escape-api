@@ -28,6 +28,8 @@ class FollowController extends Controller
                 'validator' => $validator->errors()
             ], 400);
         }
+
+        // Check if user already following
         if (auth()->user()
             ->following
             ->where('following_user', $id)
@@ -35,7 +37,17 @@ class FollowController extends Controller
         ) {
             return response()->json([
                 'error' => 'User already followed'
-            ], 400);
+            ], 403);
+        }
+
+        // Check if user has blocked, or been blocked, by profile
+        if (
+            auth()->user()->blocks->where('blocked_user', $id)->first() ||
+            User::find($id)->blocks->where('blocked_user', auth()->user()->id)->first()
+        ) {
+            return response()->json([
+                'error' => 'Profile has been blocked, or blocked you'
+            ], 403);
         }
 
         // Create profile follow
