@@ -41,6 +41,6 @@ class RecommendationsController extends Controller
             $recommendations[] = User::find($result->user);
         }
 
-        return response()->json($list);
+        return response()->json($recommendations);
     }
 }
