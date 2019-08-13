@@ -13,6 +13,8 @@ class ReportController extends Controller
     /**
      * Store a newly created resource in storage.
      *
+     * // TODO: Alert staff if user reported high number of times
+     *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */

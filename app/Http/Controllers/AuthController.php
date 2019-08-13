@@ -14,6 +14,8 @@ class AuthController extends Controller
     /**
      * Handle user registration requests
      *
+     * // TODO: Send welcome email
+     *
      * @param  Request $request
      * @return \Illuminate\Http\JsonResponse
      */
@@ -51,6 +53,8 @@ class AuthController extends Controller
 
     /**
      * Handle user login requests
+     *
+     * // TODO: Unrecognized login email
      *
      * @param  Request $request
      * @return \Illuminate\Http\JsonResponse
