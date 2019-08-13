@@ -38,6 +38,8 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('profile', 'ProfileController')->only(['show'])->middleware('blocked');
         Route::post('profile/{id}/block', 'BlockController@block')->name('profile.block');
         Route::post('profile/{id}/unblock', 'BlockController@unblock')->name('profile.unblock');
+        Route::post('profile/{id}/follow', 'FollowController@follow')->name('profile.follow');
+        Route::post('profile/{id}/unfollow', 'FollowController@unfollow')->name('profile.unfollow');
         Route::post('profile/{id}/report', 'ReportController@store')->name('profile.report');
         Route::apiResource('notification', 'NotificationController')->only(['index', 'show']);
         Route::apiResource('post', 'PostController')->only(['store', 'show', 'update', 'destroy'])->middleware('blocked');

@@ -24,10 +24,6 @@ class Following extends Model
      *
      * @var array
      */
-    protected $with = [
-        'user',
-        'followingUser'
-    ];
 
     public function user() {
         return $this->belongsTo('App\User', 'user')->without('recentPosts', 'following', 'followers');
