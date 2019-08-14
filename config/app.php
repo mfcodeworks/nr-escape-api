@@ -175,6 +175,10 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
+        /**
+         * Email Provider
+         */
+        Snowfire\Beautymail\BeautymailServiceProvider::class,
     ],
 
     /*

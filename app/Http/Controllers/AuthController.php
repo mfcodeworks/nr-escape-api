@@ -33,6 +33,14 @@ class AuthController extends Controller
             ], 400);
         }
 
+        // Send welcome email
+        app()->make(\Snowfire\Beautymail\Beautymail::class)
+            ->send('email.welcome', [], function($message) {
+                $message->from('socialhub@nygmarosebeauty.com')
+                    ->to('test@mail.com', 'John Doe')
+                    ->subject('Welcome!');
+            });
+
         // Create new user with details
         $user = User::create([
             'username' => $request->username,
