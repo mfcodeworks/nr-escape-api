@@ -12,8 +12,6 @@ class PostController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * // TODO: Check caption for @ or #, limit # to 30?
-     *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */

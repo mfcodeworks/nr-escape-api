@@ -87,4 +87,9 @@ class Post extends Model
         return $this->belongsTo('App\Post', 'repost_of', 'id')
             ->without('recentComments', 'reposts', 'repostOf');
     }
+
+    // Return the reports against this post
+    public function reportsAgainst() {
+        return $this->hasMany('App\PostReport', 'reported_post');
+    }
 }

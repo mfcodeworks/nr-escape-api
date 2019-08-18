@@ -127,6 +127,11 @@ class User extends Authenticatable
         return $this->hasMany('App\PostReport', 'author');
     }
 
+    // Return the reports against this user
+    public function reportsAgainst() {
+        return $this->hasMany('App\ProfileReport', 'reported_user');
+    }
+
     // Return blocks by this user
     public function blocks() {
         return $this->hasMany('App\Block', 'user');
