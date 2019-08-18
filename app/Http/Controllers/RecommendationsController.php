@@ -9,6 +9,8 @@ use Carbon\Carbon;
 
 class RecommendationsController extends Controller
 {
+    private $recommendations = [];
+
     /**
      * Return array of recommendations for user
      *
@@ -38,9 +40,9 @@ class RecommendationsController extends Controller
 
         // Transform userID to user object
         foreach ($list as $result) {
-            $recommendations[] = User::find($result->user);
+            $this->recommendations[] = User::find($result->user);
         }
 
-        return response()->json($recommendations);
+        return response()->json($this->recommendations);
     }
 }

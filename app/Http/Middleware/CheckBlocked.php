@@ -21,23 +21,20 @@ class CheckBlocked
         // Get response from controller
         $response = $next($request);
 
-        // Get response body
-        $body = json_decode($response->getOriginalContent(), true);
-
         // Switch route to check variables
         switch ($request->route()->getName()) {
             case 'profile.show':
+                // Get response body
+                $body = json_decode($response->getOriginalContent(), true);
                 $check = $body['id'];
                 break;
-            case 'post.store':
-            case 'post.update':
-            case 'post.destroy':
-                return $response;
-                break;
             case 'post.show':
-            default:
+                // Get response body
+                $body = json_decode($response->getOriginalContent(), true);
                 $check = $body['author']['id'];
                 break;
+            default:
+                return $response;
         }
 
         // Check if user has blocked, or been blocked, by profile

@@ -99,7 +99,7 @@ class ReportController extends Controller
 
         // If a report was found in the last 24 hours return error, else return false
         return $reported ? response()->json([
-            'error' => 'User already reported, please wait 1 day between reporting a user'
+            'error' => "$type already reported, please wait 1 day between reporting $type"
         ], 400) : false;
     }
 }

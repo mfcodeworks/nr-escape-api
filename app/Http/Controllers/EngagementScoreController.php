@@ -47,11 +47,9 @@ class EngagementScoreController extends Controller
         $engagementRaw = ($likesTotal * env('ENGAGEMENT_LIKE_WEIGHT', 1)) + ($commentsTotal * env('ENGAGEMENT_COMMENT_WEIGHT', 20)) + ($repostsTotal * env('ENGAGEMENT_REPOST_WEIGHT', 30));
 
         // Calculate engagement percentage based on followers
-        if (auth()->user()->followers_count > 0) {
-            $engagementScore = ($engagementRaw * 100) / auth()->user()->followers_count;
-        } else {
-            $engagementScore = 0;
-        }
+        auth()->user()->followers_count > 0
+        ? $engagementScore = ($engagementRaw * 100) / auth()->user()->followers_count
+        : $engagementScore = 0;
 
         // Return engagement score
         return response()->json([

@@ -35,6 +35,8 @@ class PostController extends Controller
                 'validator' => $validator->errors()
             ], 400);
         }
+
+        // Check if no caption, media, or repost
         if (!$request->caption && !$request->media && !$request->repost) {
             return response()->json([
                 'error' => 'Post cannot be empty, we need a little text or something'
@@ -52,23 +54,7 @@ class PostController extends Controller
         }
 
         // Create new post
-        $post = Post::create([
-            'author' => $request->author,
-            'type' => $request->type,
-            'caption' => $request->caption,
-            'media' => $request->media, // requires validation (may be image, video, or url)
-            'repost' => $request->repost,
-            'repost_of' => $request->repost_of
-        ]);
-
-        // Return post creation response
-        if ($post) {
-            return response()->json($post, 201);
-        } else {
-            return response()->json([
-                'error' => 'Failed to create post'
-            ], 500);
-        }
+        return Post::create($request->all());
     }
 
     /**
@@ -94,15 +80,11 @@ class PostController extends Controller
         $post = auth()->user()->posts()->find($id);
 
         // If no post, post doesn't exist or isn't owned by user
-        if (!$post) return $this->unauthorized();
-
-        // if post updated response success, else response with error
-        if ( $post->fill($request->all())->save() ) {
-            return response()->json($post, 201);
+        if (!$post) {
+            return $this->unauthorized();
         } else {
-            return response()->json([
-                'error' => 'Post could not be updated'
-            ], 500);
+            $post->fill($request->all())->save();
+            return $post::find($id);
         }
     }
 
@@ -118,18 +100,13 @@ class PostController extends Controller
 
         // If no post, post doesn't exist or isn't owned by user
         if (!$post) return $this->unauthorized();
-
-        // if post deleted response success, else response with error
-        if ($post->delete()) {
-            return response()->json('success', 204);
-        } else {
-            return response()->json([
-                'error' => 'Post could not be deleted'
-            ], 500);
+        else {
+            $post->delete();
+            return response()->json('', 204);
         }
     }
 
-    // Validate the post media type
+    // Validate the comment media type
     private function handleMedia($media) {
         // Check if media is a valid base64
         if (strpos($media, 'base64,') !== false || base64_decode($media, true) !== false) {
@@ -143,7 +120,7 @@ class PostController extends Controller
             // Create filepath
             $filename = uniqid() . "." . $extension;
             $id = auth()->user()->id;
-            $mediaPath = "SocialHub/author/{$id}/posts/$filename";
+            $mediaPath = "SocialHub/author/{$id}/comments/$filename";
 
             // Save media to DigitalOcean Spaces
             Storage::disk('spaces')->put($mediaPath, base64_decode($base64), 'public');
@@ -151,11 +128,7 @@ class PostController extends Controller
         }
 
         // Check if media is a valid URL and return URL or false
-        if (filter_var($media, FILTER_VALIDATE_URL)) {
-            return $media;
-        } else {
-            return false;
-        }
+        return filter_var($media, FILTER_VALIDATE_URL) ? $media : false;
     }
 
     // Respond with unauthorized

@@ -11,8 +11,6 @@ class CommentController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * // TODO: Check caption for @ or #, limit # to 30?
-     *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
@@ -49,21 +47,7 @@ class CommentController extends Controller
         }
 
         // Create new comment
-        $comment = Comment::create([
-            'author' => $request->author,
-            'text' => $request->text,
-            'media' => $request->media, // requires validation (may be image, video, or url)
-            'reply_to' => $request->reply_to
-        ]);
-
-        // Return comment creation response
-        if ($comment) {
-            return response()->json($comment, 201);
-        } else {
-            return response()->json([
-                'error' => 'Failed to create post'
-            ], 500);
-        }
+        return Comment::create($request->all());
     }
 
     /**
@@ -89,15 +73,11 @@ class CommentController extends Controller
         $comment = auth()->user()->comments()->find($id);
 
         // If no comment, comment doesn't exist or isn't owned by user
-        if (!$comment) return $this->unauthorized();
-
-        // if comment updated response success, else response with error
-        if ( $comment->fill($request->all())->save() ) {
-            return response()->json($comment, 201);
+        if (!$comment) {
+            return $this->unauthorized();
         } else {
-            return response()->json([
-                'error' => 'Comment could not be updated'
-            ], 500);
+            $comment->fill($request->all())->save();
+            return Comment::find($id);
         }
     }
 
@@ -112,15 +92,11 @@ class CommentController extends Controller
         $comment = auth()->user()->comments()->find($id);
 
         // If no comment, comment doesn't exist or isn't owned by user
-        if (!$comment) return $this->unauthorized();
-
-        // if comment deleted response success, else response with error
-        if ( $comment->delete() ) {
-            return response()->json('success', 204);
+        if (!$comment) {
+            return $this->unauthorized();
         } else {
-            return response()->json([
-                'error' => 'Comment could not be deleted'
-            ], 500);
+            $comment->delete();
+            return response()->json('', 204);
         }
     }
 
@@ -146,11 +122,7 @@ class CommentController extends Controller
         }
 
         // Check if media is a valid URL and return URL or false
-        if (filter_var($media, FILTER_VALIDATE_URL)) {
-            return $media;
-        } else {
-            return false;
-        }
+        return filter_var($media, FILTER_VALIDATE_URL) ? $media : false;
     }
 
     // Respond with unauthorized

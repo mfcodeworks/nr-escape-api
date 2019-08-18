@@ -129,16 +129,8 @@ class AuthController extends Controller
         }
 
         // Get authorised user account
-        $user = auth()->user();
-
-        // Save user info
-        if ( $user->fill($request->all())->save() ) {
-            return response()->json($post, 201);
-        } else {
-            return response()->json([
-                'error' => 'User could not be updated'
-            ], 500);
-        }
+        $user = auth()->user()->fill($request->all())->save();
+        return $this->user($request);
     }
 
     /**

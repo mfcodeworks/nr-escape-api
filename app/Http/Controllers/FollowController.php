@@ -17,18 +17,6 @@ class FollowController extends Controller
      */
     public function follow(Request $request, $id)
     {
-        // Validate follow info
-        $validator = Validator::make($request->all(), [
-            'user' => 'required|exists:users,id',
-            'following_user' => 'required|exists:users,id'
-        ]);
-        if ($validator->fails() || auth()->user()->id !== $request->user || $request->following_user !== intval($id)) {
-            return response()->json([
-                'error' => 'Unable to follow user',
-                'validator' => $validator->errors()
-            ], 400);
-        }
-
         // Check if user already following
         if (auth()->user()
             ->following
@@ -38,10 +26,9 @@ class FollowController extends Controller
             return response()->json([
                 'error' => 'User already followed'
             ], 403);
-        }
 
         // Check if user has blocked, or been blocked, by profile
-        if (
+        } else if (
             auth()->user()->blocks->where('blocked_user', $id)->first() ||
             User::find($id)->blocks->where('blocked_user', auth()->user()->id)->first()
         ) {
@@ -51,19 +38,10 @@ class FollowController extends Controller
         }
 
         // Create profile follow
-        $follow = Following::create([
-            'following_user' => $request->following_user,
-            'user' => $request->user
+        return Following::create([
+            'following_user' => $id,
+            'user' => auth()->user()->id
         ]);
-
-        // Return follow creation response
-        if ($follow) {
-            return response()->json($follow, 201);
-        } else {
-            return response()->json([
-                'error' => 'Failed to follow user'
-            ], 500);
-        }
     }
 
     /**
@@ -81,15 +59,11 @@ class FollowController extends Controller
             ->first();
 
         // If no follow, follow doesn't exist
-        if (!$follow) return $this->unauthorized();
-
-        // if follow deleted response success, else response with error
-        if ($follow->delete()) {
-            return response()->json('success', 204);
+        if (!$follow) {
+            return $this->unauthorized();
         } else {
-            return response()->json([
-                'error' => 'User could not be unfollowed'
-            ], 500);
+            $follow->delete();
+            return response()->json('', 204);
         }
     }
 
