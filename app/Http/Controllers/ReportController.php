@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Report;
+use App\ProfileReport;
+use App\PostReport;
 use App\User;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -20,47 +21,32 @@ class ReportController extends Controller
      */
     public function store(Request $request, $id)
     {
-        // Validate block info
-        $validator = Validator::make($request->all(), [
-            'author' => 'required|exists:users,id',
-            'reported_user' => 'required|exists:users,id'
-        ]);
-        if ($validator->fails() || auth()->user()->id !== $request->author || $request->reported_user !== intval($id)) {
-            return response()->json([
-                'error' => 'Unable to report user',
-                'validator' => $validator->errors()
-            ], 400);
-        }
+        // Check if report is profile or post
+        switch ($request->route()->getName()) {
+            case 'profile.report':
+                // Check if item recently blocked
+                $return = $this->wasBlockedRecently('profile', $id);
 
-        // Check if existing block within past day
-        if (auth()->user()
-            ->reports
-            ->where('reported_user', $id)
-            ->where(
-                'created_at',
-                '>',
-                Carbon::now()->subDay()->toDateTimeString()
-            )
-            ->first()
-        ) {
-            return response()->json([
-                'error' => 'User already reported, please wait 1 day between reporting a user'
-            ], 400);
-        }
+                // If not recently blocked create report, else return error
+                return ($return === false)
+                ? ProfileReport::create([
+                    'author' => auth()->user()->id,
+                    'reported_user' => $id
+                ])
+                : $return;
+                break;
 
-        // Create report
-        $report = Report::create([
-            'reported_user' => $request->reported_user,
-            'author' => $request->author
-        ]);
+            case 'post.report':
+                // Check if item recently blocked
+                $return = $this->wasBlockedRecently('profile', $id);
 
-        // Return report creation response
-        if ($report) {
-            return response()->json($report, 201);
-        } else {
-            return response()->json([
-                'error' => 'Failed to report user'
-            ], 500);
+                // If not recently blocked create report, else return error
+                return ($return === false)
+                ? PostReport::create([
+                    'author' => auth()->user()->id,
+                    'reported_post' => $id
+                ])
+                : $return;
         }
     }
 
@@ -74,5 +60,46 @@ class ReportController extends Controller
     {
         // Select report by ID
         return Report::find($id);
+    }
+
+    /**
+     * Check if existing block within past day
+     *
+     * @param string $type
+     * @param string $id
+     * @return \Illuminate\Http\Response
+     */
+    public function wasBlockedRecently($type, $id) {
+        // For the report type, check if recent block exists
+        switch ($type) {
+            case 'post':
+                $reported = auth()->user()
+                    ->profileReports
+                    ->where('reported_user', $id)
+                    ->where(
+                        'created_at',
+                        '>',
+                        Carbon::now()->subDay()->toDateTimeString()
+                    )->first()
+                ? true : false;
+                break;
+
+            case 'profile':
+                $reported = auth()->user()
+                    ->postReports
+                    ->where('reported_post', $id)
+                    ->where(
+                        'created_at',
+                        '>',
+                        Carbon::now()->subDay()->toDateTimeString()
+                    )->first()
+                ? true : false;
+                break;
+        }
+
+        // If a report was found in the last 24 hours return error, else return false
+        return $reported ? response()->json([
+            'error' => 'User already reported, please wait 1 day between reporting a user'
+        ], 400) : false;
     }
 }

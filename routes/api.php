@@ -43,8 +43,9 @@ Route::prefix('v1')->group(function () {
         Route::post('profile/{id}/report', 'ReportController@store')->name('profile.report');
         Route::apiResource('notification', 'NotificationController')->only(['index', 'show']);
         Route::apiResource('post', 'PostController')->only(['store', 'show', 'update', 'destroy'])->middleware('blocked');
-        Route::post('post/{id}/like', 'LikesController@store');
-        Route::delete('post/{id}/like', 'LikesController@destroy');
+        Route::post('post/{id}/like', 'LikesController@store')->name('post.like');
+        Route::delete('post/{id}/like', 'LikesController@destroy')->name('post.unlike');
+        Route::post('post/{id}/report', 'ReportController@store')->name('post.report');
         Route::apiResource('comment', 'CommentController')->only(['store', 'show', 'update', 'destroy']);
     });
 });

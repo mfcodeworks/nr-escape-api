@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Report extends Model
+class PostReport extends Model
 {
     /**
      * The attributes that are mass assignable.
@@ -13,14 +13,14 @@ class Report extends Model
      */
     protected $fillable = [
         'author',
-        'reported_user'
+        'reported_post',
     ];
 
     public function author() {
         return $this->belongsTo('App\User', 'author');
     }
 
-    public function reportedUser() {
-        return $this->belongsTo('App\User', 'reported_user');
+    public function reportedPost() {
+        return $this->belongsTo('App\Post', 'reported_post');
     }
 }

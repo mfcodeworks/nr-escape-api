@@ -120,8 +120,11 @@ class User extends Authenticatable
     }
 
     // Return the reports this user has made
-    public function reports() {
-        return $this->hasMany('App\Report', 'author');
+    public function profileReports() {
+        return $this->hasMany('App\ProfileReport', 'author');
+    }
+    public function postReports() {
+        return $this->hasMany('App\PostReport', 'author');
     }
 
     // Return blocks by this user
