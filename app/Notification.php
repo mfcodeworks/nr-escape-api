@@ -3,9 +3,15 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Watson\Rememberable\Rememberable;
 
 class Notification extends Model
 {
+    use Rememberable;
+
+    public $rememberCacheTag = 'notifications';
+    public $rememberFor = 3600;
+
     /**
      * Assignable notification values
      *

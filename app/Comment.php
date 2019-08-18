@@ -3,9 +3,15 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Watson\Rememberable\Rememberable;
 
 class Comment extends Model
 {
+    use Rememberable;
+
+    public $rememberCacheTag = 'comments';
+    public $rememberFor = 3600;
+
     /**
      * Assignable comment values
      *
