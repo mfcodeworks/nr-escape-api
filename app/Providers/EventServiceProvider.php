@@ -18,6 +18,43 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
+        // TODO: Define events and listeners
+        'App\Events\UserSignin' => [
+            'App\Listeners\CheckSigninDevice'
+        ],
+        'App\Events\NewPostLike' => [
+            'App\Listeners\PushLikeNotification',
+            'App\Listeners\CreateLikeNotification'
+        ],
+        'App\Events\NewPostRepost' => [
+            'App\Listeners\PushRepostNotification',
+            'App\Listeners\CreateRepostNotification'
+        ],
+        'App\Events\NewPostComment' => [
+            'App\Listeners\PushCommentNotification',
+            'App\Listeners\CreateCommentNotification'
+        ],
+        'App\Events\NewPost' => [
+            'App\Listeners\CheckForUserMentions',
+            'App\Listeners\PushNewPostNotifications'
+        ],
+        'App\Events\NewComment' => [
+            'App\Listeners\CheckForUserMentions'
+        ],
+        'App\Events\UserMention' => [
+            'App\Listeners\PushMentionNotification',
+            'App\Listeners\CreateMentionNotification'
+        ],
+        'App\Events\NewFollower' => [
+            'App\Listeners\PushFollowerNotification',
+            'App\Listeners\CreateFollowerNotification'
+        ],
+        'App\Events\PostReported' => [
+            'App\Listeners\AdminSendPostReports'
+        ],
+        'App\Events\ProfileReported' => [
+            'App\Listeners\AdminSendProfileReports'
+        ]
     ];
 
     /**
