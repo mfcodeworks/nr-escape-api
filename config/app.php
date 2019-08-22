@@ -180,6 +180,11 @@ return [
          * Email Provider
          */
         Snowfire\Beautymail\BeautymailServiceProvider::class,
+
+        /**
+         * Push Notifications Provider
+         */
+        LaravelFCM\FCMServiceProvider::class,
     ],
 
     /*
@@ -209,6 +214,8 @@ return [
         'DB' => Illuminate\Support\Facades\DB::class,
         'Eloquent' => Illuminate\Database\Eloquent\Model::class,
         'Event' => Illuminate\Support\Facades\Event::class,
+        'FCM' => LaravelFCM\Facades\FCM::class,
+	    'FCMGroup' => LaravelFCM\Facades\FCMGroup::class,
         'File' => Illuminate\Support\Facades\File::class,
         'Gate' => Illuminate\Support\Facades\Gate::class,
         'Hash' => Illuminate\Support\Facades\Hash::class,
