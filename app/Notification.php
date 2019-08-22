@@ -21,6 +21,7 @@ class Notification extends Model
         'for_author',
         'from_user',
         'post_id',
+        'comment_id',
         'type'
     ];
 
