@@ -38,10 +38,6 @@ class EventServiceProvider extends ServiceProvider
             'App\Listeners\PushNewPostNotifications',
             'App\Listeners\CreateNewPostNotification'
         ],
-        'App\Events\UserMention' => [
-            'App\Listeners\PushMentionNotification',
-            'App\Listeners\CreateMentionNotification'
-        ],
         'App\Events\NewFollower' => [
             'App\Listeners\PushFollowerNotification',
             'App\Listeners\CreateFollowerNotification'

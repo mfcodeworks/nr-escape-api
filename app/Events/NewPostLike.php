@@ -2,35 +2,23 @@
 
 namespace App\Events;
 
-use Illuminate\Broadcasting\Channel;
+use App\Like;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Broadcasting\PresenceChannel;
-use Illuminate\Foundation\Events\Dispatchable;
-use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
 class NewPostLike
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    use SerializesModels;
+
+    public $like;
 
     /**
      * Create a new event instance.
      *
+     * @param App\Like $like
      * @return void
      */
-    public function __construct()
+    public function __construct(Like $like)
     {
-        //
-    }
-
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return \Illuminate\Broadcasting\Channel|array
-     */
-    public function broadcastOn()
-    {
-        return new PrivateChannel('channel-name');
+        $this->like = $like;
     }
 }
