@@ -9,6 +9,13 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 class AdminSendProfileReports
 {
     /**
+     * The name of the queue the job should be sent to.
+     *
+     * @var string|null
+     */
+    public $queue = 'email';
+
+    /**
      * Create the event listener.
      *
      * @return void
