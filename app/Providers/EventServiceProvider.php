@@ -30,16 +30,13 @@ class EventServiceProvider extends ServiceProvider
             'App\Listeners\PushRepostNotification',
             'App\Listeners\CreateRepostNotification'
         ],
-        'App\Events\NewPostComment' => [
+        'App\Events\NewComment' => [
             'App\Listeners\PushCommentNotification',
             'App\Listeners\CreateCommentNotification'
         ],
         'App\Events\NewPost' => [
-            'App\Listeners\CheckForUserMentions',
-            'App\Listeners\PushNewPostNotifications'
-        ],
-        'App\Events\NewComment' => [
-            'App\Listeners\CheckForUserMentions'
+            'App\Listeners\PushNewPostNotifications',
+            'App\Listeners\CreateNewPostNotification'
         ],
         'App\Events\UserMention' => [
             'App\Listeners\PushMentionNotification',
@@ -55,6 +52,15 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\ProfileReported' => [
             'App\Listeners\AdminSendProfileReports'
         ]
+    ];
+
+    /**
+     * The subscriber classes to register.
+     *
+     * @var array
+     */
+    protected $subscribe = [
+        'App\Listeners\CheckForUserMentions',
     ];
 
     /**

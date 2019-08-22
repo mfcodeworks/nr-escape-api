@@ -2,7 +2,6 @@
 
 namespace App\Listeners;
 
-use App\Events\NewComment;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
@@ -19,13 +18,34 @@ class CheckForUserMentions
     }
 
     /**
-     * Handle the event.
+     * TODO: Check post/comment text for user mention (@user)
+     * Regex check: \B(\@[a-zA-Z\-\_]+\b)
+     * Foreach result
+     *   event(new UserMention(User::where('username', $result));
      *
-     * @param  NewComment  $event
+     * @param $event
      * @return void
      */
-    public function handle(NewComment $event)
+    public function handle($event)
     {
-        //
+
+    }
+
+    /**
+     * Handle event subscriptions
+     *
+     * @param $event
+     * @return void
+     */
+    public function subscribe($events) {
+        $events->listen(
+            'App\Events\NewPost',
+            'App\Listeners\CheckForUserMentions@handle'
+        );
+
+        $events->listen(
+            'App\Events\NewComment',
+            'App\Listeners\CheckForUserMentions@handle'
+        );
     }
 }
