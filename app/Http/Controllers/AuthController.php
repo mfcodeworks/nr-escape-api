@@ -14,8 +14,6 @@ class AuthController extends Controller
     /**
      * Handle user registration requests
      *
-     * // TODO: Send welcome email
-     *
      * @param  Request $request
      * @return \Illuminate\Http\JsonResponse
      */
@@ -131,6 +129,21 @@ class AuthController extends Controller
         // Get authorised user account
         $user = auth()->user()->fill($request->all())->save();
         return $this->user($request);
+    }
+
+    /**
+     * Insert FCM Token
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function fcm(Request $request) {
+        // Update FCM Token
+        $user = auth()->user()
+            ->fill($request->all())
+            ->save();
+
+        if ($user) return response()->json('success', 204);
     }
 
     /**

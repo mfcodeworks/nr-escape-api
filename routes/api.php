@@ -26,6 +26,7 @@ Route::prefix('v1')->group(function () {
         // user routes
         Route::prefix('me')->group(function() {
             Route::get('/', 'AuthController@user')->name('user.show');
+            Route::post('fcm', 'AuthController@fcm')->name('user.fcm');
             Route::put('update', 'AuthController@update')->name('user.update');
             Route::post('deactivate', 'AuthController@deactivate')->name('user.destroy');
             Route::get('notifications', 'NotificationController@index')->name('user.notifications');
