@@ -26,6 +26,18 @@ class CreateRepostNotification
      */
     public function handle(NewPostRepost $event)
     {
-        //
+        // Get related users
+        $to = Post::find($event->post->repost_of)
+            ->author()
+            ->pluck('id');
+        $from = $event->post->author;
+
+        // Create notification
+        Notification::create([
+            'for_author' => $to,
+            'from_user' => $from,
+            'post_id' => $event->post->id,
+            'type' => 'reposted'
+        ]);
     }
 }

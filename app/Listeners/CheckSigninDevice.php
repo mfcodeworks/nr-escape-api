@@ -26,6 +26,6 @@ class CheckSigninDevice
      */
     public function handle(UserSignin $event)
     {
-        //
+        // TODO: Check user signin device against known devices
     }
 }

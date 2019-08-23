@@ -5,6 +5,12 @@ namespace App\Listeners;
 use App\Events\NewPost;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use LaravelFCM\Message\OptionsBuilder;
+use LaravelFCM\Message\PayloadDataBuilder;
+use LaravelFCM\Message\PayloadNotificationBuilder;
+use LaravelFCM\Message\Topics;
+use FCM;
+use FCMGroup;
 
 class PushNewPostNotifications
 {
@@ -33,6 +39,24 @@ class PushNewPostNotifications
      */
     public function handle(NewPost $event)
     {
-        //
+        // Get Post Author FCM Token
+        $author_id = $event->post->author;
+
+        // Get username that commented
+        $username = User::where('id', $author_id)
+            ->first()
+            ->pluck('username');
+
+        // Send to topic for this user
+        $topic = (new Topics())->topic("{$author_id}.posts");
+
+        // Create Notification
+        $notification = (new PayloadNotificationBuilder())
+            ->setTitle('New Post')
+            ->setBody("{$username} has a new post")
+            ->build();
+
+        // Send Notification
+        $response = FCM::sendToTopic($topic, null, $notification, null);
     }
 }

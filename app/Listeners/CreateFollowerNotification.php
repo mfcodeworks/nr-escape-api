@@ -26,6 +26,15 @@ class CreateFollowerNotification
      */
     public function handle(NewFollower $event)
     {
-        //
+        // Get related users
+        $to = $event->following->following_user;
+        $from = $event->following->user;
+
+        // Create notification
+        Notification::create([
+            'for_author' => $to,
+            'from_user' => $from,
+            'type' => 'followed'
+        ]);
     }
 }

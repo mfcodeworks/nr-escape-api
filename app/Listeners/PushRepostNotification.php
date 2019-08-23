@@ -5,6 +5,11 @@ namespace App\Listeners;
 use App\Events\NewPostRepost;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use LaravelFCM\Message\OptionsBuilder;
+use LaravelFCM\Message\PayloadDataBuilder;
+use LaravelFCM\Message\PayloadNotificationBuilder;
+use FCM;
+use FCMGroup;
 
 class PushRepostNotification
 {
@@ -33,6 +38,22 @@ class PushRepostNotification
      */
     public function handle(NewPostRepost $event)
     {
-        //
+        // Get Post Author FCM Token
+        $fcm_to = Post::where('id', $event->post->repost_of)
+            ->author()->pluck('fcm_token');
+
+        // Get username that commented
+        $username = User::where('id', $event->post->author)
+            ->first()
+            ->pluck('username');
+
+        // Create Notification
+        $notification = (new PayloadNotificationBuilder())
+            ->setTitle('New Repost')
+            ->setBody("{$username} reposted your post")
+            ->build();
+
+        // Send Notification
+        $response = FCM::sendTo($fcm_to, null, $notification, null);
     }
 }

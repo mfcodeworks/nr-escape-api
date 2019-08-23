@@ -18,7 +18,7 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
-        // TODO: Define events and listeners
+        // Define events and listeners
         'App\Events\UserSignin' => [
             'App\Listeners\CheckSigninDevice'
         ],
@@ -35,8 +35,7 @@ class EventServiceProvider extends ServiceProvider
             'App\Listeners\CreateCommentNotification'
         ],
         'App\Events\NewPost' => [
-            'App\Listeners\PushNewPostNotifications',
-            'App\Listeners\CreateNewPostNotification'
+            'App\Listeners\PushNewPostNotifications'
         ],
         'App\Events\NewFollower' => [
             'App\Listeners\PushFollowerNotification',

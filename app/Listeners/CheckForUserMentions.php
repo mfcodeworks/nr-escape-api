@@ -2,6 +2,7 @@
 
 namespace App\Listeners;
 
+use Illuminate\Facade\Log;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
@@ -25,7 +26,48 @@ class CheckForUserMentions
     }
 
     /**
-     * TODO: Check post/comment text for user mention (@user)
+     * Check post text for user mention (@user)
+     * Regex check: /\B(\@[a-zA-Z\-\_]+\b)/
+     * Foreach result
+     *   user = User::where('username', $result);
+     * Create notification
+     * Push notification
+     *
+     * @param $event
+     * @return void
+     */
+    public function handlePost($event)
+    {
+        // Scan Post Caption
+        preg_match('/\B(\@[a-zA-Z\-\_]+\b)/', $event->post->caption, $matches);
+
+        // Get username of OP
+        $username = User::where('id', $event->post->author)
+            ->first()
+            ->pluck('username');
+
+        // Notify each match of tag
+        foreach ($matches as $match) {
+            Log::notice("Matched user tag {$match[0]} in post {$event->post->id}");
+
+            // Get User FCM Token
+            $fcm_to = User::where('username', ltrim($match[0], '@'))
+                ->first()
+                ->pluck('fcm_token');
+
+            // Create Notification
+            $notification = (new PayloadNotificationBuilder())
+                ->setTitle('New Tag')
+                ->setBody("{$username} tagged you in a post")
+                ->build();
+
+            // Send Notification
+            $response = FCM::sendTo($fcm_to, null, $notification, null);
+        }
+    }
+
+    /**
+     * Check comment text for user mention (@user)
      * Regex check: \B(\@[a-zA-Z\-\_]+\b)
      * Foreach result
      *   user = User::where('username', $result);
@@ -35,9 +77,34 @@ class CheckForUserMentions
      * @param $event
      * @return void
      */
-    public function handle($event)
+    public function handleComment($event)
     {
+        // Scan Comment Text
+        preg_match('/\B(\@[a-zA-Z\-\_]+\b)/', $event->comment->text, $matches);
 
+        // Get username of OP
+        $username = User::where('id', $event->comment->author)
+            ->first()
+            ->pluck('username');
+
+        // Notify each match of tag
+        foreach ($matches as $match) {
+            Log::notice("Matched user tag {$match[0]} in comment {$event->comment->id}");
+
+            // Get User FCM Token
+            $fcm_to = User::where('username', ltrim($match[0], '@'))
+                ->first()
+                ->pluck('fcm_token');
+
+            // Create Notification
+            $notification = (new PayloadNotificationBuilder())
+                ->setTitle('New Tag')
+                ->setBody("{$username} tagged you in a comment")
+                ->build();
+
+            // Send Notification
+            $response = FCM::sendTo($fcm_to, null, $notification, null);
+        }
     }
 
     /**
@@ -49,12 +116,12 @@ class CheckForUserMentions
     public function subscribe($events) {
         $events->listen(
             'App\Events\NewPost',
-            'App\Listeners\CheckForUserMentions@handle'
+            'App\Listeners\CheckForUserMentions@handlePost'
         );
 
         $events->listen(
             'App\Events\NewComment',
-            'App\Listeners\CheckForUserMentions@handle'
+            'App\Listeners\CheckForUserMentions@handleComment'
         );
     }
 }

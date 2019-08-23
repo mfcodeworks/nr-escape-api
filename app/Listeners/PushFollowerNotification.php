@@ -5,6 +5,11 @@ namespace App\Listeners;
 use App\Events\NewFollower;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use LaravelFCM\Message\OptionsBuilder;
+use LaravelFCM\Message\PayloadDataBuilder;
+use LaravelFCM\Message\PayloadNotificationBuilder;
+use FCM;
+use FCMGroup;
 
 class PushFollowerNotification
 {
@@ -33,6 +38,23 @@ class PushFollowerNotification
      */
     public function handle(NewFollower $event)
     {
-        //
+        // Get Post Author FCM Token
+        $fcm_to = User::where('id', $event->following->following_user)
+            ->first()
+            ->pluck('fcm_token');
+
+        // Get username that followed
+        $username = User::where('id', $event->following->user)
+            ->first()
+            ->pluck('username');
+
+        // Create Notification
+        $notification = (new PayloadNotificationBuilder())
+            ->setTitle('New Follower')
+            ->setBody("{$username} followed you")
+            ->build();
+
+        // Send Notification
+        $response = FCM::sendTo($fcm_to, null, $notification, null);
     }
 }
