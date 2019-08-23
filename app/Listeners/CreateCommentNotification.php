@@ -2,8 +2,9 @@
 
 namespace App\Listeners;
 
+use App\Post;
 use App\Notification;
-use App\Events\NewPostComment;
+use App\Events\NewComment;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
@@ -22,15 +23,15 @@ class CreateCommentNotification
     /**
      * Handle the event.
      *
-     * @param  NewPostComment  $event
+     * @param  NewComment  $event
      * @return void
      */
-    public function handle(NewPostComment $event)
+    public function handle(NewComment $event)
     {
         // Get related users
         $to = Post::find($event->comment->reply_to)
             ->author()
-            ->pluck('id');
+            ->value('id');
         $from = $event->comment->author;
 
         // Create notification

@@ -2,9 +2,15 @@
 
 namespace App\Listeners;
 
+use App\User;
 use Illuminate\Facade\Log;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use LaravelFCM\Message\OptionsBuilder;
+use LaravelFCM\Message\PayloadDataBuilder;
+use LaravelFCM\Message\PayloadNotificationBuilder;
+use FCM;
+use FCMGroup;
 
 class CheckForUserMentions
 {
@@ -44,7 +50,7 @@ class CheckForUserMentions
         // Get username of OP
         $username = User::where('id', $event->post->author)
             ->first()
-            ->pluck('username');
+            ->value('username');
 
         // Notify each match of tag
         foreach ($matches as $match) {
@@ -53,7 +59,7 @@ class CheckForUserMentions
             // Get User FCM Token
             $fcm_to = User::where('username', ltrim($match[0], '@'))
                 ->first()
-                ->pluck('fcm_token');
+                ->value('fcm_token');
 
             // Create Notification
             $notification = (new PayloadNotificationBuilder())
@@ -85,7 +91,7 @@ class CheckForUserMentions
         // Get username of OP
         $username = User::where('id', $event->comment->author)
             ->first()
-            ->pluck('username');
+            ->value('username');
 
         // Notify each match of tag
         foreach ($matches as $match) {
@@ -94,7 +100,7 @@ class CheckForUserMentions
             // Get User FCM Token
             $fcm_to = User::where('username', ltrim($match[0], '@'))
                 ->first()
-                ->pluck('fcm_token');
+                ->value('fcm_token');
 
             // Create Notification
             $notification = (new PayloadNotificationBuilder())

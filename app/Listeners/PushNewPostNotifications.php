@@ -2,6 +2,7 @@
 
 namespace App\Listeners;
 
+use App\User;
 use App\Events\NewPost;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -45,7 +46,7 @@ class PushNewPostNotifications
         // Get username that commented
         $username = User::where('id', $author_id)
             ->first()
-            ->pluck('username');
+            ->value('username');
 
         // Send to topic for this user
         $topic = (new Topics())->topic("{$author_id}.posts");

@@ -18,6 +18,7 @@ class LikesController extends Controller
      */
     public function store(Request $request, $id)
     {
+        /*
         // Check if post already liked
         if (auth()->user()
             ->likes
@@ -28,7 +29,7 @@ class LikesController extends Controller
                 'error' => 'Post already liked'
             ], 400);
         }
-
+*/
         // Create post like
         $like = Like::create([
             'post' => $id,

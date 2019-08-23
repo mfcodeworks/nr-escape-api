@@ -2,7 +2,9 @@
 
 namespace App\Listeners;
 
-use App\Events\NewPostComment;
+use App\Events\NewComment;
+use App\Post;
+use App\User;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use LaravelFCM\Message\OptionsBuilder;
@@ -33,19 +35,19 @@ class PushCommentNotification
     /**
      * Handle the event.
      *
-     * @param  NewPostComment $event
+     * @param  NewComment $event
      * @return void
      */
-    public function handle(NewPostComment $event)
+    public function handle(NewComment $event)
     {
         // Get Post Author FCM Token
         $fcm_to = Post::where('id', $event->comment->reply_to)
-            ->author()->pluck('fcm_token');
+            ->author()->value('fcm_token');
 
         // Get username that commented
         $username = User::where('id', $event->comment->author)
             ->first()
-            ->pluck('username');
+            ->value('username');
 
         // Create Notification
         $notification = (new PayloadNotificationBuilder())

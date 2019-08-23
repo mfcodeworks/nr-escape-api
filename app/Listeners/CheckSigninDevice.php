@@ -3,6 +3,8 @@
 namespace App\Listeners;
 
 use App\Events\UserSignin;
+use Illuminate\Http\Request;
+use App\User;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 

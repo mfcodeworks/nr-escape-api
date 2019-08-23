@@ -2,6 +2,8 @@
 
 namespace App\Listeners;
 
+use App\Post;
+use App\Notification;
 use App\Events\NewPostLike;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -29,7 +31,7 @@ class CreateLikeNotification
         // Get related users
         $to = Post::find($event->like->post)
             ->author()
-            ->pluck('id');
+            ->value('id');
         $from = $event->like->user;
 
         // Create notification

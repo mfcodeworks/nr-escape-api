@@ -2,6 +2,8 @@
 
 namespace App\Listeners;
 
+use App\User;
+use App\Post;
 use App\Events\NewPostRepost;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -40,12 +42,12 @@ class PushRepostNotification
     {
         // Get Post Author FCM Token
         $fcm_to = Post::where('id', $event->post->repost_of)
-            ->author()->pluck('fcm_token');
+            ->author()->value('fcm_token');
 
         // Get username that commented
         $username = User::where('id', $event->post->author)
             ->first()
-            ->pluck('username');
+            ->value('username');
 
         // Create Notification
         $notification = (new PayloadNotificationBuilder())

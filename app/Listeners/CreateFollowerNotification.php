@@ -2,6 +2,7 @@
 
 namespace App\Listeners;
 
+use App\Notification;
 use App\Events\NewFollower;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;

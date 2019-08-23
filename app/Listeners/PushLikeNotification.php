@@ -2,6 +2,8 @@
 
 namespace App\Listeners;
 
+use App\Post;
+use App\User;
 use App\Events\NewPostLike;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -39,13 +41,14 @@ class PushLikeNotification
     public function handle(NewPostLike $event)
     {
         // Get Post Author FCM Token
-        $fcm_to = Post::where('id', $event->like->post)
-            ->author()->pluck('fcm_token');
+        $fcm_to = Post::find($event->like->post)
+            ->author()
+            ->value('fcm_token');
 
         // Get username that commented
         $username = User::where('id', $event->like->user)
             ->first()
-            ->pluck('username');
+            ->value('username');
 
         // Create Notification
         $notification = (new PayloadNotificationBuilder())

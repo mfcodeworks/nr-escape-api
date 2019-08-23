@@ -2,6 +2,8 @@
 
 namespace App\Listeners;
 
+use App\Post;
+use App\Notification;
 use App\Events\NewPostRepost;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -29,7 +31,7 @@ class CreateRepostNotification
         // Get related users
         $to = Post::find($event->post->repost_of)
             ->author()
-            ->pluck('id');
+            ->value('id');
         $from = $event->post->author;
 
         // Create notification

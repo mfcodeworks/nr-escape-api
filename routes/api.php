@@ -13,6 +13,8 @@ use Illuminate\Http\Request;
 |
 */
 
+// TODO: Don't fire events where user is for and from
+
 // API: v1 routes
 Route::prefix('v1')->group(function () {
     // login/signup no auth routes

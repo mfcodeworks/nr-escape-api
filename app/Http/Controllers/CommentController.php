@@ -51,7 +51,7 @@ class CommentController extends Controller
         $comment = Comment::create($request->all());
 
         // Send new comment event
-        event(new Comment($comment));
+        event(new NewComment($comment));
 
         return $comment;
     }
