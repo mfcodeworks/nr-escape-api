@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Comment;
+use App\Events\NewComment;
 use Illuminate\Http\Request;
 use Validator;
 
@@ -47,7 +48,12 @@ class CommentController extends Controller
         }
 
         // Create new comment
-        return Comment::create($request->all());
+        $comment = Comment::create($request->all());
+
+        // Send new comment event
+        event(new Comment($comment));
+
+        return $comment;
     }
 
     /**

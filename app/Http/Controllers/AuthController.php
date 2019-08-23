@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\User;
+use App\Events\UserSignin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -81,6 +82,9 @@ class AuthController extends Controller
 
             // Create JWT for access
             $token = auth()->user()->createToken('SocialHub')->accessToken;
+
+            // Dispatch login event
+            event(new UserSignin($request));
 
             // Return successful response
             return response()->json([

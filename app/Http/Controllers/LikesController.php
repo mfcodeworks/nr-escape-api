@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Like;
+use App\Events\NewPostLike;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Validator;
@@ -29,10 +30,14 @@ class LikesController extends Controller
         }
 
         // Create post like
-        return Like::create([
+        $like = Like::create([
             'post' => $id,
             'user' => auth()->user()->id
         ]);
+
+        event(new NewPostLike($like));
+
+        return $like;
     }
 
     /**

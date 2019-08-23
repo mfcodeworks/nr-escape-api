@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\User;
 use App\Following;
+use App\Events\NewFollower;
 use Validator;
 
 class FollowController extends Controller
@@ -38,10 +39,14 @@ class FollowController extends Controller
         }
 
         // Create profile follow
-        return Following::create([
+        $follow = Following::create([
             'following_user' => $id,
             'user' => auth()->user()->id
         ]);
+
+        event(new NewFollower($follow));
+
+        return $follow;
     }
 
     /**

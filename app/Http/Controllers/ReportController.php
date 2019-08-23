@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\ProfileReport;
 use App\PostReport;
 use App\User;
+use App\Events\PostReported;
+use App\Events\ProfileReported;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Validator;
@@ -28,12 +30,14 @@ class ReportController extends Controller
                 $return = $this->wasBlockedRecently('profile', $id);
 
                 // If not recently blocked create report, else return error
-                return ($return === false)
-                ? ProfileReport::create([
-                    'author' => auth()->user()->id,
-                    'reported_user' => $id
-                ])
-                : $return;
+                if ($return === false) {
+                    $report = ProfileReport::create([
+                        'author' => auth()->user()->id,
+                        'reported_user' => $id
+                    ]);
+                    event(new ProfileReported($report));
+                    return $report;
+                }
                 break;
 
             case 'post.report':
@@ -41,13 +45,16 @@ class ReportController extends Controller
                 $return = $this->wasBlockedRecently('profile', $id);
 
                 // If not recently blocked create report, else return error
-                return ($return === false)
-                ? PostReport::create([
-                    'author' => auth()->user()->id,
-                    'reported_post' => $id
-                ])
-                : $return;
+                if ($return === false) {
+                    $report = PostReport::create([
+                        'author' => auth()->user()->id,
+                        'reported_post' => $id
+                    ]);
+                    event(new PostReported($report));
+                    return $report;
+                }
         }
+        return $return;
     }
 
     /**

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Post;
+use App\Events\NewPost;
+use App\Events\NewPostRepost;
 use Illuminate\Http\Request;
 use Validator;
 use Storage;
@@ -52,7 +54,11 @@ class PostController extends Controller
         }
 
         // Create new post
-        return Post::create($request->all());
+        $post = Post::create($request->all());
+
+        $post->repost ? event(new NewPostRepost($post)) : event(new NewPost($post));
+
+        return $post;
     }
 
     /**
