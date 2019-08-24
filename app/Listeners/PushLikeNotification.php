@@ -13,7 +13,7 @@ use LaravelFCM\Message\PayloadNotificationBuilder;
 use FCM;
 use FCMGroup;
 
-class PushLikeNotification
+class PushLikeNotification implements ShouldQueue
 {
     /**
      * The name of the queue the job should be sent to.

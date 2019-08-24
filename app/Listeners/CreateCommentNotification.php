@@ -8,7 +8,7 @@ use App\Events\NewComment;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class CreateCommentNotification
+class CreateCommentNotification implements ShouldQueue
 {
     /**
      * Create the event listener.

@@ -7,7 +7,7 @@ use App\Events\NewFollower;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class CreateFollowerNotification
+class CreateFollowerNotification implements ShouldQueue
 {
     /**
      * Create the event listener.

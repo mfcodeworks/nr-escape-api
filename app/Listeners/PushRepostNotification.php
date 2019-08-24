@@ -13,7 +13,7 @@ use LaravelFCM\Message\PayloadNotificationBuilder;
 use FCM;
 use FCMGroup;
 
-class PushRepostNotification
+class PushRepostNotification implements ShouldQueue
 {
     /**
      * The name of the queue the job should be sent to.

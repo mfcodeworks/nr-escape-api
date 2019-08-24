@@ -8,7 +8,7 @@ use App\Events\NewPostLike;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class CreateLikeNotification
+class CreateLikeNotification implements ShouldQueue
 {
     /**
      * Create the event listener.

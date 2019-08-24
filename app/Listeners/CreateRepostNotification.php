@@ -8,7 +8,7 @@ use App\Events\NewPostRepost;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class CreateRepostNotification
+class CreateRepostNotification implements ShouldQueue
 {
     /**
      * Create the event listener.

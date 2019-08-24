@@ -12,7 +12,7 @@ use LaravelFCM\Message\PayloadNotificationBuilder;
 use FCM;
 use FCMGroup;
 
-class CheckForUserMentions
+class CheckForUserMentions implements ShouldQueue
 {
     /**
      * The name of the queue the job should be sent to.

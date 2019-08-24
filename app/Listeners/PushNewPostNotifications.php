@@ -13,7 +13,7 @@ use LaravelFCM\Message\Topics;
 use FCM;
 use FCMGroup;
 
-class PushNewPostNotifications
+class PushNewPostNotifications implements ShouldQueue
 {
     /**
      * The name of the queue the job should be sent to.

@@ -8,7 +8,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Carbon\Carbon;
 
-class AdminSendPostReports
+class AdminSendPostReports implements ShouldQueue
 {
     /**
      * The name of the queue the job should be sent to.
