@@ -2,13 +2,13 @@
 
 namespace App\Listeners;
 
-use App\Events\UserSignin;
-use Illuminate\Http\Request;
 use App\User;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
+use App\Device;
+use Jenssegers\Agent\Agent;
+use App\Events\UserSignin;
+use Illuminate\Support\Facades\Log;
 
-class CheckSigninDevice implements ShouldQueue
+class CheckSigninDevice
 {
     /**
      * Create the event listener.
@@ -28,6 +28,16 @@ class CheckSigninDevice implements ShouldQueue
      */
     public function handle(UserSignin $event)
     {
+        // Reference agent
+        $agent = $event->request;
+
+        // Log Request
+        Log::info($agent);
+
         // TODO: Check user signin device against known devices
+        if (!$agent['robot']) {
+            // Save device
+            Device::create($agent);
+        }
     }
 }

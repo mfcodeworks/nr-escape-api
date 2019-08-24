@@ -2,7 +2,6 @@
 
 namespace App\Events;
 
-use Illuminate\Http\Request;
 use Illuminate\Queue\SerializesModels;
 
 class UserSignin
@@ -14,10 +13,10 @@ class UserSignin
     /**
      * Create a new event instance.
      *
-     * @param Illuminate\Http\Request $request
+     * @param $request
      * @return void
      */
-    public function __construct(Request $request)
+    public function __construct($request)
     {
         $this->request = $request;
     }

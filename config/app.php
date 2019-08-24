@@ -177,6 +177,11 @@ return [
         App\Providers\RouteServiceProvider::class,
 
         /**
+         * Request Agent Provider
+         */
+        Jenssegers\Agent\AgentServiceProvider::class,
+
+        /**
          * Email Provider
          */
         Snowfire\Beautymail\BeautymailServiceProvider::class,
@@ -200,6 +205,7 @@ return [
 
     'aliases' => [
 
+        'Agent' => Jenssegers\Agent\Facades\Agent::class,
         'App' => Illuminate\Support\Facades\App::class,
         'Arr' => Illuminate\Support\Arr::class,
         'Artisan' => Illuminate\Support\Facades\Artisan::class,

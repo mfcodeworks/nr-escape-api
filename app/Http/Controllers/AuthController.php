@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use Jenssegers\Agent\Agent;
 use App\User;
 use App\Events\UserSignin;
 use Illuminate\Http\Request;
@@ -61,8 +62,6 @@ class AuthController extends Controller
     /**
      * Handle user login requests
      *
-     * // TODO: Unrecognized login email
-     *
      * @param  Request $request
      * @return \Illuminate\Http\JsonResponse
      */
@@ -84,7 +83,15 @@ class AuthController extends Controller
             $token = auth()->user()->createToken('SocialHub')->accessToken;
 
             // Dispatch login event
-            event(new UserSignin($request));
+            $agent = new Agent();
+            event(new UserSignin([
+                'ip' => $request->ip(),
+                'device' => $agent->device(),
+                'platform' => $agent->platform(),
+                'browser' => $agent->browser(),
+                'robot' => $agent->isRobot(),
+                'user_id' => auth()->user()->id
+            ]));
 
             // Return successful response
             return response()->json([
