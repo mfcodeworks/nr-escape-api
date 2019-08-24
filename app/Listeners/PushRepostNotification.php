@@ -41,7 +41,7 @@ class PushRepostNotification
     public function handle(NewPostRepost $event)
     {
         // Get Post Author FCM Token
-        $fcm_to = Post::where('id', $event->post->repost_of)
+        $fcm_to = Post::find($event->post->repost_of)
             ->author()->value('fcm_token');
 
         // Get username that commented
@@ -56,6 +56,6 @@ class PushRepostNotification
             ->build();
 
         // Send Notification
-        $response = FCM::sendTo($fcm_to, null, $notification, null);
+        $response = FCM::sendToGroup($fcm_to, null, $notification, null);
     }
 }

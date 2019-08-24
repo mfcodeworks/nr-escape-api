@@ -17,7 +17,7 @@ class NewPostRepost
      * @param App\Post $post
      * @return void
      */
-    public function __construct()
+    public function __construct(Post $post)
     {
         $this->post = $post;
     }

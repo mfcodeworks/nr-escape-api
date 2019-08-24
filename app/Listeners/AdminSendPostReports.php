@@ -2,6 +2,7 @@
 
 namespace App\Listeners;
 
+use App\PostReport;
 use App\Events\PostReported;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -35,9 +36,9 @@ class AdminSendPostReports
     public function handle(PostReported $event)
     {
         // Count recent reports
-        $count = PostReport::where('created_at', '>', Carbon::now()->subMonths(env('PROFILE_REPORTS_PERIOD', 3))
-            ->where('id', $event->PostReport->reported_post)
-            ->count());
+        $count = PostReport::where('created_at', '>', Carbon::now()->subMonths(env('PROFILE_REPORTS_PERIOD', 3)))
+            ->where('reported_post', $event->report->reported_post)
+            ->count();
 
         if ($count > 3) {
             // TODO: Email Admins

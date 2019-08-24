@@ -57,6 +57,6 @@ class PushLikeNotification
             ->build();
 
         // Send Notification
-        $response = FCM::sendTo($fcm_to, null, $notification, null);
+        $response = FCM::sendToGroup($fcm_to, null, $notification, null);
     }
 }

@@ -41,8 +41,9 @@ class PushCommentNotification
     public function handle(NewComment $event)
     {
         // Get Post Author FCM Token
-        $fcm_to = Post::where('id', $event->comment->reply_to)
-            ->author()->value('fcm_token');
+        $fcm_to = Post::find($event->comment->reply_to)
+            ->author()
+            ->value('fcm_token');
 
         // Get username that commented
         $username = User::where('id', $event->comment->author)
@@ -56,6 +57,6 @@ class PushCommentNotification
             ->build();
 
         // Send Notification
-        $response = FCM::sendTo($fcm_to, null, $notification, null);
+        $response = FCM::sendToGroup($fcm_to, null, $notification, null);
     }
 }

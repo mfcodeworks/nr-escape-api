@@ -2,6 +2,7 @@
 
 namespace App\Listeners;
 
+use App\ProfileReport;
 use App\Events\ProfileReported;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -35,9 +36,9 @@ class AdminSendProfileReports
     public function handle(ProfileReported $event)
     {
         // Count recent reports
-        $count = ProfileReport::where('created_at', '>', Carbon::now()->subMonths(env('PROFILE_REPORTS_PERIOD', 3))
-            ->where('id', $event->ProfileReport->reported_user)
-            ->count());
+        $count = ProfileReport::where('created_at', '>', Carbon::now()->subMonths(env('PROFILE_REPORTS_PERIOD', 3)))
+            ->where('reported_user', $event->report->reported_user)
+            ->count();
 
         if ($count > 3) {
             // TODO: Email Admins
