@@ -74,7 +74,7 @@ class BlockController extends Controller
     // Respond with unauthorized
     private function unauthorized() {
         return response()->json([
-            'error' => 'Block doesn\'t exist or not owned by user'
+            'error' => 'User not blocked'
         ], 401);
     }
 }

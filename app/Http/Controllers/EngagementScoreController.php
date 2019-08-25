@@ -48,8 +48,8 @@ class EngagementScoreController extends Controller
 
         // Calculate engagement percentage based on followers
         auth()->user()->followers_count > 0
-        ? $engagementScore = ($engagementRaw * 100) / auth()->user()->followers_count
-        : $engagementScore = 0;
+            ? $engagementScore = ($engagementRaw * 100) / auth()->user()->followers_count
+            : $engagementScore = 0;
 
         // Return engagement score
         return response()->json([

@@ -49,6 +49,7 @@ class AuthController extends Controller
                 ->subject('Welcome to Escape');
         });
 
+        // Get passport token
         $token = $user->createToken('SocialHub')->accessToken;
 
         // Signup success response
@@ -103,9 +104,9 @@ class AuthController extends Controller
             ], 201);
 
         // If auth fails respond with error
-        } else {
-            return response()->json(['error' => 'Incorrect username or password'], 401);
         }
+
+        return response()->json(['error' => 'Incorrect username or password'], 401);
     }
 
     /**
@@ -150,7 +151,7 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function fcm(Request $request) {
-        // Update FCM Token
+        // Update FCM Token TODO: Add to group
         $user = auth()->user()
             ->fill($request->all())
             ->save();
