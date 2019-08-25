@@ -28,6 +28,7 @@ class CheckBlocked
                 $body = json_decode($response->getOriginalContent(), true);
                 $check = $body['id'];
                 break;
+            case 'comment.show':
             case 'post.show':
                 // Get response body
                 $body = json_decode($response->getOriginalContent(), true);

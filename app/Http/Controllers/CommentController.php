@@ -10,6 +10,17 @@ use Validator;
 class CommentController extends Controller
 {
     /**
+     * Instantiate a new UserController instance.
+     */
+   public function __construct()
+   {
+       // Check if blocked
+       $this->middleware('blocked', [
+           'only' => 'show'
+       ]);
+   }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request

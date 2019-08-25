@@ -12,12 +12,12 @@ class ProfileController extends Controller
      */
    public function __construct()
    {
-       // Check if blocked in
+       // Check if blocked
        $this->middleware('blocked', [
            'only' => 'show'
        ]);
    }
-   
+
     /**
      * Display the specified resource.
      *

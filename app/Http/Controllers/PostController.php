@@ -14,9 +14,8 @@ class PostController extends Controller
     /**
      * Instantiate a new UserController instance.
      */
-   public function __construct()
-   {
-       // Check if blocked in
+   public function __construct() {
+       // Check if blocked
        $this->middleware('blocked', [
            'only' => 'show'
        ]);
