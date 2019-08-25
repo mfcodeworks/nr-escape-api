@@ -90,5 +90,17 @@ class AdminReportSummary implements ShouldQueue
             ->orderBy('post_date', 'desc')
             ->get();
         Log::notice($posts);
+
+        // Email out the reports
+        $beautymail = app()->make('Snowfire\Beautymail\Beautymail');
+        $beautymail->send('emails.admin.reports', [
+            'posts' => $posts,
+            'profiles' => $profiles
+        ], function($message) {
+            $message
+                ->from('it@nygmarosebeauty.com')
+                ->to('it@nygmarosebeauty.com', 'NR IT')
+                ->subject('[Reports] NR Escape Reposts Summary');
+        });
     }
 }
