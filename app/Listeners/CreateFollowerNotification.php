@@ -31,6 +31,9 @@ class CreateFollowerNotification implements ShouldQueue
         $to = $event->following->following_user;
         $from = $event->following->user;
 
+        // Don't create notificaton if same user
+        if ($to == $from) return;
+
         // Create notification
         Notification::create([
             'for_author' => $to,

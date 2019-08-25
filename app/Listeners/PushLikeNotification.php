@@ -40,6 +40,14 @@ class PushLikeNotification implements ShouldQueue
      */
     public function handle(NewPostLike $event)
     {
+        // Don't create notificaton if same user
+        if (
+            $event->like->user ==
+            Post::find($event->like->post)
+            ->author()
+            ->value('id')
+        ) return;
+
         // Get Post Author FCM Token
         $fcm_to = Post::find($event->like->post)
             ->author()

@@ -34,6 +34,9 @@ class CreateCommentNotification implements ShouldQueue
             ->value('id');
         $from = $event->comment->author;
 
+        // Don't create notificaton if same user
+        if ($to == $from) return;
+
         // Create notification
         Notification::create([
             'for_author' => $to,

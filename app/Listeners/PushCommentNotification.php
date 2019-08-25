@@ -40,6 +40,14 @@ class PushCommentNotification implements ShouldQueue
      */
     public function handle(NewComment $event)
     {
+        // Don't create notificaton if same user
+        if (
+            $event->comment->author ==
+            Post::find($event->comment->reply_to)
+            ->author()
+            ->value('id')
+        ) return;
+
         // Get Post Author FCM Token
         $fcm_to = Post::find($event->comment->reply_to)
             ->author()

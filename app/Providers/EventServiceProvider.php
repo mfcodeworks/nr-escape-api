@@ -41,12 +41,6 @@ class EventServiceProvider extends ServiceProvider
             'App\Listeners\PushFollowerNotification',
             'App\Listeners\CreateFollowerNotification'
         ],
-        'App\Events\PostReported' => [
-            'App\Listeners\AdminSendPostReports'
-        ],
-        'App\Events\ProfileReported' => [
-            'App\Listeners\AdminSendProfileReports'
-        ]
     ];
 
     /**

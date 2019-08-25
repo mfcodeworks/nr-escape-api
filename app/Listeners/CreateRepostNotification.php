@@ -34,6 +34,9 @@ class CreateRepostNotification implements ShouldQueue
             ->value('id');
         $from = $event->post->author;
 
+        // Don't create notificaton if same user
+        if ($to == $from) return;
+
         // Create notification
         Notification::create([
             'for_author' => $to,
