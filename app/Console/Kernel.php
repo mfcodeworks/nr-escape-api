@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Jobs\AdminReportSummary;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -25,10 +26,11 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // Snapshot queues for horizon every 5 minutes
-        $schedule->command('horizon:snapshot')->everyFiveMinutes();
+        $schedule->command('horizon:snapshot')
+            ->everyFiveMinutes();
 
-        // $schedule->command('inspire')
-        //          ->hourly();
+        $schedule->job(new AdminReportSummary)
+                 ->everyMinute();
     }
 
     /**
