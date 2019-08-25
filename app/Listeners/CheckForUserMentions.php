@@ -44,17 +44,28 @@ class CheckForUserMentions implements ShouldQueue
      */
     public function handlePost($event)
     {
+        // DEBUG: Log event
+        Log::notice($event->post);
+
         // Scan Post Caption
-        preg_match('/\B(\@[a-zA-Z\-\_]+\b)/', $event->post->caption, $matches);
+        $matches;
+        preg_match('/\B(\@[0-9a-zA-Z\-\_]+\b)/', $event->post->caption, $matches);
 
         // Get username of OP
-        $username = User::where('id', $event->post->author)
-            ->first()
+        $username = User::find($event->post->author)
             ->value('username');
 
         // Notify each match of tag
         foreach ($matches as $match) {
             Log::notice("Matched user tag {$match[0]} in post {$event->post->id}");
+
+            // Don't notify if user tagged themselves
+            if (User::where('username', ltrim($match[0], '@'))
+                    ->first()
+                    ->value('id')
+                === User::find($event->post->author)
+                    ->value('id')
+            ) continue;
 
             // Get User FCM Token
             $fcm_to = User::where('username', ltrim($match[0], '@'))
@@ -85,17 +96,27 @@ class CheckForUserMentions implements ShouldQueue
      */
     public function handleComment($event)
     {
+        // DEBUG: Log event
+        Log::notice($event->comment);
+
         // Scan Comment Text
-        preg_match('/\B(\@[a-zA-Z\-\_]+\b)/', $event->comment->text, $matches);
+        preg_match('/\B(\@[0-9a-zA-Z\-\_]+\b)/', $event->comment->text, $matches);
 
         // Get username of OP
-        $username = User::where('id', $event->comment->author)
-            ->first()
+        $username = User::find($event->comment->author)
             ->value('username');
 
         // Notify each match of tag
         foreach ($matches as $match) {
             Log::notice("Matched user tag {$match[0]} in comment {$event->comment->id}");
+
+            // Don't notify if user tagged themselves
+            if (User::where('username', ltrim($match[0], '@'))
+                    ->first()
+                    ->value('id')
+                === User::find($event->comment->author)
+                    ->value('id')
+            ) continue;
 
             // Get User FCM Token
             $fcm_to = User::where('username', ltrim($match[0], '@'))
@@ -116,12 +137,17 @@ class CheckForUserMentions implements ShouldQueue
     /**
      * Handle event subscriptions
      *
-     * @param $event
+     * @param  \Illuminate\Events\Dispatcher  $events
      * @return void
      */
     public function subscribe($events) {
         $events->listen(
             'App\Events\NewPost',
+            'App\Listeners\CheckForUserMentions@handlePost'
+        );
+
+        $events->listen(
+            'App\Events\NewPostRepost',
             'App\Listeners\CheckForUserMentions@handlePost'
         );
 
