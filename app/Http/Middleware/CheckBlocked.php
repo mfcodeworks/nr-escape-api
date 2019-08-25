@@ -33,8 +33,6 @@ class CheckBlocked
                 $body = json_decode($response->getOriginalContent(), true);
                 $check = $body['author']['id'];
                 break;
-            default:
-                return $response;
         }
 
         // Check if user has blocked, or been blocked, by profile

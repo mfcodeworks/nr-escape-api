@@ -8,6 +8,17 @@ use Illuminate\Http\Request;
 class ProfileController extends Controller
 {
     /**
+     * Instantiate a new UserController instance.
+     */
+   public function __construct()
+   {
+       // Check if blocked in
+       $this->middleware('blocked', [
+           'only' => 'show'
+       ]);
+   }
+   
+    /**
      * Display the specified resource.
      *
      * @param  int  $id

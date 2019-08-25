@@ -29,11 +29,17 @@ class BlockController extends Controller
         }
 
         // If user was previously following profile, remove the follow
-        auth()->user()
+        if (auth()->user()
             ->following
             ->where('following_user', $id)
             ->first()
-            ->delete();
+        ) {
+            auth()->user()
+                ->following
+                ->where('following_user', $id)
+                ->first()
+                ->delete();
+        }
 
         // Create profile block
         return Block::create([

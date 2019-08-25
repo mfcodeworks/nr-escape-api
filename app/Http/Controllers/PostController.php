@@ -12,6 +12,17 @@ use Storage;
 class PostController extends Controller
 {
     /**
+     * Instantiate a new UserController instance.
+     */
+   public function __construct()
+   {
+       // Check if blocked in
+       $this->middleware('blocked', [
+           'only' => 'show'
+       ]);
+   }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request

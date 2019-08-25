@@ -38,17 +38,17 @@ Route::prefix('v1')->group(function () {
         });
 
         // resource routes
-        Route::apiResource('profile', 'ProfileController')->only(['show'])->middleware('blocked');
+        Route::apiResource('profile', 'ProfileController')->only(['show']);
         Route::post('profile/{id}/block', 'BlockController@block')->name('profile.block');
         Route::post('profile/{id}/unblock', 'BlockController@unblock')->name('profile.unblock');
         Route::post('profile/{id}/follow', 'FollowController@follow')->name('profile.follow');
         Route::post('profile/{id}/unfollow', 'FollowController@unfollow')->name('profile.unfollow');
         Route::post('profile/{id}/report', 'ReportController@store')->name('profile.report');
         Route::apiResource('notification', 'NotificationController')->only(['index', 'show']);
-        Route::apiResource('post', 'PostController')->only(['store', 'show', 'update', 'destroy'])->middleware('blocked');
+        Route::apiResource('post', 'PostController');
         Route::post('post/{id}/like', 'LikesController@store')->name('post.like');
         Route::delete('post/{id}/like', 'LikesController@destroy')->name('post.unlike');
         Route::post('post/{id}/report', 'ReportController@store')->name('post.report');
-        Route::apiResource('comment', 'CommentController')->only(['store', 'show', 'update', 'destroy']);
+        Route::apiResource('comment', 'CommentController');
     });
 });
