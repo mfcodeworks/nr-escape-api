@@ -34,8 +34,37 @@ class CheckSigninDevice
         // Log Request
         Log::info($agent);
 
-        // TODO: Check user signin device against known devices
+        /**
+         * Check user signin device against known devices
+         *
+         * For user check if:
+         * - Device and IP (Nexus at 102.66.226.55)
+         * - Device and platform and browser (Nexus Android 4.0 Chrome)
+         *
+         */
         if (!$agent['robot']) {
+            // Check if any similar device
+            Device::where('user_id', $agent->user_id)
+                ->where('device', $agent->device)
+                ->where(function($q) {
+                    $q->where('ip', $agent->ip)
+                        ->orWhere(function($r) {
+                            $r->where('platform', $agent->platform)
+                                ->where('browser', $agent->browser);
+                        });
+                })
+                ->first();
+
+            // Send unknown device email
+            $user = User::find($agent->user_id);
+            $beautymail = app()->make('Snowfire\Beautymail\Beautymail');
+            $beautymail->send('emails.unknown-device', ['agent' => $agent], function($message) use ($user) {
+                $message
+                    ->from('it@nygmarosebeauty.com')
+                    ->to($user->email, $user->username)
+                    ->subject('Escape unknown device login');
+            });
+
             // Save device
             Device::create($agent);
         }

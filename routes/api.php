@@ -13,8 +13,6 @@ use Illuminate\Http\Request;
 |
 */
 
-// TODO: Email report summary every 3 days
-
 // API: v1 routes
 Route::prefix('v1')->middleware('timer')->group(function () {
     // login/signup no auth routes

@@ -61,6 +61,7 @@ class AdminReportSummary implements ShouldQueue
      */
     public function handle()
     {
+        // Get profile reports
         $profiles = DB::table('profile_reports')
             ->select(
                 'reported_user as profile',
@@ -71,8 +72,8 @@ class AdminReportSummary implements ShouldQueue
             ->orderBy('reports', 'desc')
             ->orderBy('created_at', 'desc')
             ->get();
-        Log::notice($profiles);
 
+        // Get post reports
         $posts = DB::table('post_reports')
             ->select(
                 'post_reports.reported_post as post',
@@ -89,7 +90,6 @@ class AdminReportSummary implements ShouldQueue
             ->orderBy('reports', 'desc')
             ->orderBy('post_date', 'desc')
             ->get();
-        Log::notice($posts);
 
         // Email out the reports
         $beautymail = app()->make('Snowfire\Beautymail\Beautymail');
