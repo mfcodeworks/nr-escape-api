@@ -44,8 +44,8 @@ class PushCommentNotification implements ShouldQueue
         if (
             $event->comment->author ==
             Post::find($event->comment->reply_to)
-            ->author()
-            ->value('id')
+                ->author()
+                ->value('id')
         ) return;
 
         // Get Post Author FCM Token
@@ -54,14 +54,12 @@ class PushCommentNotification implements ShouldQueue
             ->value('fcm_token');
 
         // Get username that commented
-        $username = User::where('id', $event->comment->author)
-            ->first()
-            ->value('username');
+        $user = User::find($event->comment->author)->value('username');
 
         // Create Notification
         $notification = (new PayloadNotificationBuilder())
             ->setTitle('New Comment')
-            ->setBody("{$username} commented on your post")
+            ->setBody("{$user} commented on your post")
             ->build();
 
         // Send Notification

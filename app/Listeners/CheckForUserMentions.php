@@ -3,7 +3,7 @@
 namespace App\Listeners;
 
 use App\User;
-use Illuminate\Facade\Log;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use LaravelFCM\Message\OptionsBuilder;
@@ -44,23 +44,20 @@ class CheckForUserMentions implements ShouldQueue
      */
     public function handlePost($event)
     {
-        // DEBUG: Log event
-        Log::notice($event->post);
-
         // Scan Post Caption
         $matches;
-        preg_match('/\B(\@[0-9a-zA-Z\-\_]+\b)/', $event->post->caption, $matches);
+        preg_match_all('/\B(\@[0-9a-zA-Z\-\_]+\b)/', $event->post->caption, $matches);
 
         // Get username of OP
         $username = User::find($event->post->author)
             ->value('username');
 
         // Notify each match of tag
-        foreach ($matches as $match) {
-            Log::notice("Matched user tag {$match[0]} in post {$event->post->id}");
+        foreach ($matches[0] as $match) {
+            Log::notice("Matched user tag {$match} in post {$event->post->id}");
 
             // Don't notify if user tagged themselves
-            if (User::where('username', ltrim($match[0], '@'))
+            if (User::where('username', ltrim($match, '@'))
                     ->first()
                     ->value('id')
                 === User::find($event->post->author)
@@ -68,7 +65,7 @@ class CheckForUserMentions implements ShouldQueue
             ) continue;
 
             // Get User FCM Token
-            $fcm_to = User::where('username', ltrim($match[0], '@'))
+            $fcm_to = User::where('username', ltrim($match, '@'))
                 ->first()
                 ->value('fcm_token');
 
@@ -96,22 +93,20 @@ class CheckForUserMentions implements ShouldQueue
      */
     public function handleComment($event)
     {
-        // DEBUG: Log event
-        Log::notice($event->comment);
-
         // Scan Comment Text
-        preg_match('/\B(\@[0-9a-zA-Z\-\_]+\b)/', $event->comment->text, $matches);
+        $matches;
+        preg_match_all('/\B(\@[0-9a-zA-Z\-\_]+\b)/', $event->comment->text, $matches);
 
         // Get username of OP
         $username = User::find($event->comment->author)
             ->value('username');
 
         // Notify each match of tag
-        foreach ($matches as $match) {
-            Log::notice("Matched user tag {$match[0]} in comment {$event->comment->id}");
+        foreach ($matches[0] as $match) {
+            Log::notice("Matched user tag {$match} in comment {$event->comment->id}");
 
             // Don't notify if user tagged themselves
-            if (User::where('username', ltrim($match[0], '@'))
+            if (User::where('username', ltrim($match, '@'))
                     ->first()
                     ->value('id')
                 === User::find($event->comment->author)
@@ -119,7 +114,7 @@ class CheckForUserMentions implements ShouldQueue
             ) continue;
 
             // Get User FCM Token
-            $fcm_to = User::where('username', ltrim($match[0], '@'))
+            $fcm_to = User::where('username', ltrim($match, '@'))
                 ->first()
                 ->value('fcm_token');
 
