@@ -24,7 +24,7 @@ class PostController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request) {
@@ -66,6 +66,7 @@ class PostController extends Controller
         // Create new post
         $post = Post::create($request->all());
 
+        // Dispatch event, either new post or repost
         $post->repost ? event(new NewPostRepost($post)) : event(new NewPost($post));
 
         return $post;
@@ -74,7 +75,7 @@ class PostController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id) {
@@ -85,8 +86,8 @@ class PostController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param \Illuminate\Http\Request  $request
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id) {
@@ -96,16 +97,16 @@ class PostController extends Controller
         // If no post, post doesn't exist or isn't owned by user
         if (!$post) {
             return $this->unauthorized();
-        } else {
-            $post->fill($request->all())->save();
-            return $post::find($id);
         }
+
+        $post->fill($request->all())->save();
+        return $post::find($id);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id) {
@@ -120,7 +121,12 @@ class PostController extends Controller
         }
     }
 
-    // Validate the comment media type
+    /**
+     * Validate the comment media type
+     *
+     * @param string $media Base64 or URL
+     * @return string media URL
+     */
     private function handleMedia($media) {
         // Check if media is a valid base64
         if (strpos($media, 'base64,') !== false || base64_decode($media, true) !== false) {

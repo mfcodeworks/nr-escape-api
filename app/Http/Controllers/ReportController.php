@@ -16,7 +16,8 @@ class ReportController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request, $id)
@@ -53,18 +54,6 @@ class ReportController extends Controller
                 }
         }
         return $return;
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Report  $report
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Report $report)
-    {
-        // Select report by ID
-        return Report::find($id);
     }
 
     /**

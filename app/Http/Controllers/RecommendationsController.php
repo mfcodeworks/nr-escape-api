@@ -20,9 +20,12 @@ class RecommendationsController extends Controller
      * - where count(user following and this.user following overlap) as mutual_following >= 3 mutual following
      * - order by mutual_following desc
      * - order by activity desc
+     *
+     * @return \Illuminate\Http\Response
      */
 
     public function __invoke() {
+        // Get a list of user ids
         $list = DB::table('following')
             ->select(
                 'following.user',

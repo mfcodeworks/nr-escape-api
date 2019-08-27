@@ -17,9 +17,9 @@ class CreateCommentsTable extends Migration
             // Comment values
             $table->bigIncrements('id');
             $table->unsignedBigInteger('author');
-            $table->text('text')->nullable($value = true);
-            $table->string('media')->nullable($value = true);
-            $table->unsignedBigInteger('reply_to')->nullable($value = true);
+            $table->text('text')->nullable();
+            $table->string('media')->nullable();
+            $table->unsignedBigInteger('reply_to')->nullable();
             $table->timestamps();
 
             // Comment references user owner, on delete of owner remove comments

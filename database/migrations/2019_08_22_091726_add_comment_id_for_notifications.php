@@ -33,6 +33,9 @@ class AddCommentIdForNotifications extends Migration
      */
     public function down()
     {
-        //
+        Schema::table('notifications', function (Blueprint $table) {
+            $table->dropColumn('post_id');
+            $table->dropColumn('comment_id');
+        }
     }
 }

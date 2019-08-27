@@ -16,10 +16,10 @@ class AddPersonalInfoToUsers extends Migration
         Schema::table('users', function (Blueprint $table) {
             // User personal profile values
             $table->renameColumn('name', 'username');
-            $table->string('profile_pic')->nullable($value = true);
-            $table->text('bio')->nullable($value = true);
-            $table->json('contact_info')->nullable($value = true);
-            $table->json('settings')->nullable($value = true);
+            $table->string('profile_pic')->nullable();
+            $table->text('bio')->nullable();
+            $table->json('contact_info')->nullable();
+            $table->json('settings')->nullable();
         });
     }
 

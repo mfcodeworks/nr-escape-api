@@ -27,8 +27,8 @@ class AddBannedDeactivatedToUsers extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            Schema::dropIfExists('deactivated');
-            Schema::dropIfExists('banned_until');
+            $table->dropColumn('deactivated');
+            $table->dropColumn('banned_until');
         });
     }
 }

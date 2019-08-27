@@ -18,9 +18,9 @@ class CreatePostsTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('author');
             $table->string('type');
-            $table->string('media')->nullable($value = true);
-            $table->text('caption')->nullable($value = true);
-            $table->boolean('repost')->nullable($value = true);
+            $table->string('media')->nullable();
+            $table->text('caption')->nullable();
+            $table->boolean('repost')->nullable();
             $table->timestamps();
 
             // Post references user owner, on delete of owner remove posts

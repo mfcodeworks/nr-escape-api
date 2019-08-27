@@ -16,7 +16,7 @@ class AuthController extends Controller
     /**
      * Handle user registration requests
      *
-     * @param  Request $request
+     * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function register(Request $request) {
@@ -50,7 +50,7 @@ class AuthController extends Controller
         });
 
         // Get passport token
-        $token = $user->createToken('SocialHub')->accessToken;
+        $token = $user->createToken(env('APP_NAME', 'Escape'))->accessToken;
 
         // Signup success response
         return response()->json([
@@ -64,7 +64,7 @@ class AuthController extends Controller
     /**
      * Handle user login requests
      *
-     * @param  Request $request
+     * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function login(Request $request) {
@@ -82,7 +82,7 @@ class AuthController extends Controller
             $user->save();
 
             // Create JWT for access
-            $token = auth()->user()->createToken('SocialHub')->accessToken;
+            $token = auth()->user()->createToken(env('APP_NAME', 'Escape'))->accessToken;
 
             // Dispatch login event
             $agent = new Agent();
@@ -112,7 +112,7 @@ class AuthController extends Controller
     /**
      * Return the authenticated users details
      *
-     * @param  Request $request
+     * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function user(Request $request) {
@@ -130,7 +130,7 @@ class AuthController extends Controller
     /**
      * Update user data
      *
-     * @param  Request $request
+     * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function update(Request $request) {
@@ -179,7 +179,7 @@ class AuthController extends Controller
     /**
      * Deactivate user
      *
-     * @param  Request $request
+     * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function deactivate(Request $request) {

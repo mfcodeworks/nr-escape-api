@@ -23,7 +23,7 @@ class CommentController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request) {
@@ -70,7 +70,7 @@ class CommentController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id) {
@@ -81,8 +81,8 @@ class CommentController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param \Illuminate\Http\Request  $request
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id) {
@@ -92,16 +92,16 @@ class CommentController extends Controller
         // If no comment, comment doesn't exist or isn't owned by user
         if (!$comment) {
             return $this->unauthorized();
-        } else {
-            $comment->fill($request->all())->save();
-            return Comment::find($id);
         }
+
+        $comment->fill($request->all())->save();
+        return Comment::find($id);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id) {
@@ -111,13 +111,18 @@ class CommentController extends Controller
         // If no comment, comment doesn't exist or isn't owned by user
         if (!$comment) {
             return $this->unauthorized();
-        } else {
-            $comment->delete();
-            return response()->json('', 204);
         }
+
+        $comment->delete();
+        return response()->json('', 204);
     }
 
-    // Validate the comment media type
+    /**
+     * Validate the comment media type
+     *
+     * @param string $media Base64 or URL
+     * @return string media URL
+     */
     private function handleMedia($media) {
         // Check if media is a valid base64
         if (strpos($media, 'base64,') !== false || base64_decode($media, true) !== false) {

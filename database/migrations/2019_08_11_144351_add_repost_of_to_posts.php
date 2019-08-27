@@ -14,7 +14,7 @@ class AddRepostOfToPosts extends Migration
     public function up()
     {
         Schema::table('posts', function (Blueprint $table) {
-            $table->unsignedBigInteger('repost_of')->nullable($value = true);
+            $table->unsignedBigInteger('repost_of')->nullable();
 
             // Post references child post
             $table->foreign('repost_of')
@@ -31,7 +31,7 @@ class AddRepostOfToPosts extends Migration
     public function down()
     {
         Schema::table('posts', function (Blueprint $table) {
-            Schema::dropIfExists('repost_of');
+            $table->dropColumn('repost_of');
         });
     }
 }

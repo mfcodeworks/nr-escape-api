@@ -42,7 +42,7 @@ class ResetPasswordController extends Controller
     /**
      * Handle user password reset requests
      *
-     * @param  Request $request
+     * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function reset(Request $request) {

@@ -19,6 +19,8 @@ class EngagementScoreController extends Controller
      * - Common weightage (likes:comments:reposts)
      * - Facebook 1:20:30
      * - Google+ 1:10:20
+     *
+     * @return \Illuminate\Http\Response
      */
 
     public function __invoke() {
