@@ -151,12 +151,29 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function fcm(Request $request) {
-        // Update FCM Token TODO: Add to group
-        $user = auth()->user()
-            ->fill($request->all())
-            ->save();
+        // Get user
+        $user = auth()->user();
 
-        if ($user) return response()->json('success', 204);
+        // Get new token
+        $token = $request->token;
+
+        // Set group name
+        $groupName = "user.{$user->id}";
+
+        // Get group key if existing
+        $groupToken = $user->fcm_token;
+
+        // If group token add, otherwise create
+        $key = ($groupToken)
+        ? FCMGroup::addToGroup($groupName, $groupToken, $token)
+        : FCMGroup::createGroup($groupName, $token);
+
+        // Update group token
+        $save = $user->fill([
+            'fcm_token' => $key
+        ])->save();
+
+        if ($save) return response()->json('success', 204);
     }
 
     /**
