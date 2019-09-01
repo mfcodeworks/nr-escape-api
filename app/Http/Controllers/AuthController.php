@@ -134,13 +134,16 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function update(Request $request) {
+        // Instantiate user data
+        $data = $request->all();
+
         // If updating password, hash new password
         if ($request->password) {
-            $request->password = Hash::make($request->password);
+            $data['password'] = Hash::make($request->password);
         }
 
         // Get authorised user account
-        $user = auth()->user()->fill($request->all())->save();
+        $user = auth()->user()->fill($data)->save();
         return $this->user($request);
     }
 
