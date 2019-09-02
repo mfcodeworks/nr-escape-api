@@ -142,6 +142,8 @@ class AuthController extends Controller
             $data['password'] = Hash::make($request->password);
         }
 
+        // TODO: If profile pic then handle
+
         // Get authorised user account
         $user = auth()->user()->fill($data)->save();
         return $this->user($request);
