@@ -44,19 +44,19 @@ class CheckSigninDevice
          */
         if (!$agent['robot']) {
             // Check if any similar device
-            Device::where('user_id', $agent->user_id)
-                ->where('device', $agent->device)
-                ->where(function($q) {
-                    $q->where('ip', $agent->ip)
-                        ->orWhere(function($r) {
-                            $r->where('platform', $agent->platform)
-                                ->where('browser', $agent->browser);
+            Device::where('user_id', $agent['user_id'])
+                ->where('device', $agent['device'])
+                ->where(function($q) use ($agent) {
+                    $q->where('ip', $agent['ip'])
+                        ->orWhere(function($r) use ($agent) {
+                            $r->where('platform', $agent['platform'])
+                                ->where('browser', $agent['browser']);
                         });
                 })
                 ->first();
 
             // Send unknown device email
-            $user = User::find($agent->user_id);
+            $user = User::find($agent['user_id']);
             $beautymail = app()->make('Snowfire\Beautymail\Beautymail');
             $beautymail->send('emails.unknown-device', ['agent' => $agent], function($message) use ($user) {
                 $message
