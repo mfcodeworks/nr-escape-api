@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "501cecdc72e6328523f042dbf135a4fb",
+    "content-hash": "67e29ad72b5fa876ccdd28ba60275e85",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1039,6 +1039,33 @@
             "description": "A simple library to encode and decode JSON Web Tokens (JWT) in PHP. Should conform to the current spec.",
             "homepage": "https://github.com/firebase/php-jwt",
             "time": "2017-06-27T22:17:23+00:00"
+        },
+        {
+            "name": "grohiro/laravel-camelcase-json",
+            "version": "1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/grohiro/laravel-camelcase-json.git",
+                "reference": "9659d3c418c835864648f3ba1c2c42d2769a543c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/grohiro/laravel-camelcase-json/zipball/9659d3c418c835864648f3ba1c2c42d2769a543c",
+                "reference": "9659d3c418c835864648f3ba1c2c42d2769a543c",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Grohiro\\LaravelCamelCaseJson\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Convert response JSON key to camelCase",
+            "time": "2017-12-11T14:07:52+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -4883,50 +4910,6 @@
                 "environment"
             ],
             "time": "2019-06-15T22:40:20+00:00"
-        },
-        {
-            "name": "watson/rememberable",
-            "version": "3.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/dwightwatson/rememberable.git",
-                "reference": "f3451ed6c4f9b902e1d1b3817dc62508c6b16d90"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/dwightwatson/rememberable/zipball/f3451ed6c4f9b902e1d1b3817dc62508c6b16d90",
-                "reference": "f3451ed6c4f9b902e1d1b3817dc62508c6b16d90",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/database": "~5.0",
-                "illuminate/support": "~5.0",
-                "php": ">=5.4.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Watson\\Rememberable\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Dwight Watson",
-                    "email": "dwight@studiousapp.com"
-                }
-            ],
-            "description": "Query caching for Laravel 5",
-            "keywords": [
-                "caching",
-                "eloquent",
-                "laravel",
-                "remember"
-            ],
-            "time": "2019-02-27T03:32:43+00:00"
         },
         {
             "name": "zendframework/zend-diactoros",

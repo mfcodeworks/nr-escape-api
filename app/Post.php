@@ -3,15 +3,9 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use Watson\Rememberable\Rememberable;
 
 class Post extends Model
 {
-    use Rememberable;
-
-    public $rememberCacheTag = 'posts';
-    public $rememberFor = 3600;
-
     /**
      * Assignable post values
      *

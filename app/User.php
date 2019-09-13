@@ -5,15 +5,11 @@ namespace App;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Watson\Rememberable\Rememberable;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, Notifiable, Rememberable;
-
-    public $rememberCacheTag = 'users';
-    public $rememberFor = 3600;
-
+    use HasApiTokens, Notifiable;
+    
     /**
      * The attributes that are mass assignable.
      *
@@ -39,7 +35,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $with = [
-        'recentPosts',
+        //'recentPosts',
         'following',
         'followers'
     ];
@@ -80,7 +76,8 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'banned_until' => 'datetime',
-        'settings' => 'array'
+        'settings' => 'array',
+        'contact_info' => 'array'
     ];
 
     // Return notifications for this user
