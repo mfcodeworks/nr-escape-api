@@ -190,6 +190,11 @@ return [
          * Push Notifications Provider
          */
         LaravelFCM\FCMServiceProvider::class,
+
+        /**
+         * API Camel Case Provider
+         */
+        Grohiro\LaravelCamelCaseJson\CamelCaseJsonResponseServiceProvider::class,
     ],
 
     /*
