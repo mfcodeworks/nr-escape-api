@@ -43,10 +43,10 @@ class BlockController extends Controller
         }
 
         // Create profile block
-        return Block::create([
+        return response()->json(Block::create([
             'blocked_user' => $id,
             'user' => auth()->user()->id
-        ]);
+        ]));
     }
 
     /**
@@ -68,7 +68,7 @@ class BlockController extends Controller
             return $this->unauthorized();
         } else {
             $block->delete();
-            return response()->json('', 204);
+            return response()->json('success', 204);
         }
     }
 

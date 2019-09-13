@@ -35,6 +35,6 @@ class NotificationController extends Controller
      */
     public function show($id) {
         // Select notification by ID
-        return Notification::find($id);
+        return response()->json(Notification::find($id));
     }
 }

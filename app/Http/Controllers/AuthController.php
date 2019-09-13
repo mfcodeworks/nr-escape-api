@@ -146,7 +146,7 @@ class AuthController extends Controller
 
         // Get authorised user account
         $user = auth()->user()->fill($data)->save();
-        return $this->user($request);
+        return response()->json($this->user($request));
     }
 
     /**

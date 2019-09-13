@@ -38,7 +38,7 @@ class LikesController extends Controller
 
         event(new NewPostLike($like));
 
-        return $like;
+        return response()->json($like);
     }
 
     /**
@@ -60,7 +60,7 @@ class LikesController extends Controller
             return $this->unauthorized();
         } else {
             $like->delete();
-            return response()->json('', 204);
+            return response()->json('success', 204);
         }
     }
 

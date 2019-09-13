@@ -47,7 +47,7 @@ class FollowController extends Controller
 
         event(new NewFollower($follow));
 
-        return $follow;
+        return response()->json($follow);
     }
 
     /**
@@ -69,7 +69,7 @@ class FollowController extends Controller
             return $this->unauthorized();
         } else {
             $follow->delete();
-            return response()->json('', 204);
+            return response()->json('success', 204);
         }
     }
 

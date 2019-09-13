@@ -64,7 +64,7 @@ class CommentController extends Controller
         // Send new comment event
         event(new NewComment($comment));
 
-        return $comment;
+        return response()->json($comment);
     }
 
     /**
@@ -75,7 +75,7 @@ class CommentController extends Controller
      */
     public function show($id) {
         // Select comment by ID
-        return Comment::find($id);
+        return response()->json(Comment::find($id));
     }
 
     /**
@@ -95,7 +95,7 @@ class CommentController extends Controller
         }
 
         $comment->fill($request->all())->save();
-        return Comment::find($id);
+        return response()->json(Comment::find($id));
     }
 
     /**
@@ -114,7 +114,7 @@ class CommentController extends Controller
         }
 
         $comment->delete();
-        return response()->json('', 204);
+        return response()->json('success', 204);
     }
 
     /**
