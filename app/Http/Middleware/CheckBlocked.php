@@ -21,9 +21,6 @@ class CheckBlocked
         // Instantiate variable to check
         $check = 0;
 
-        // Get response from controller
-        $response = $next($request);
-
         Log::alert(json_encode($request->route()));
 
         // Switch route to check variables
@@ -40,15 +37,16 @@ class CheckBlocked
         }
 
         // Check if user has blocked, or been blocked, by profile
-        if (
-            auth()->user()->blocks->where('blocked_user', $check)->first() ||
-            User::findOrFail($check)->blocks->where('blocked_user', auth()->user()->id)->first()
-        ) {
+        if (auth()->user()->blocks->where('blocked_user', $check)->first()) {
             return response()->json([
-                'error' => 'Profile has been blocked'
+                'error' => 'You have blocked this profile'
+            ], 400);
+        } elseif (User::findOrFail($check)->blocks->where('blocked_user', auth()->user()->id)->first()) {
+            return response()->json([
+                'error' => 'Profile has blocked you'
             ], 400);
         }
 
-        return $response;
+        return $next($request);
     }
 }
