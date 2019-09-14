@@ -117,14 +117,10 @@ class AuthController extends Controller
      */
     public function user(Request $request) {
         // Get authenticated user
-        $user = auth()->user()->toArray();
-
-        // Fill in hidden data for authenticated user to view
-        $user['settings'] = auth()->user()->settings;
-        $user['email'] = auth()->user()->email;
+        $user = auth()->user();
 
         // Return user with hidden data
-        return response()->json($user);
+        return response()->json($user->makeVisible(['fcm_token', 'settings', 'email']));
     }
 
     /**

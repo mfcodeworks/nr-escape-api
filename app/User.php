@@ -9,7 +9,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 class User extends Authenticatable
 {
     use HasApiTokens, Notifiable;
-    
+
     /**
      * The attributes that are mass assignable.
      *
@@ -65,7 +65,8 @@ class User extends Authenticatable
         'remember_token',
         'created_at',
         'updated_at',
-        'email_verified_at'
+        'email_verified_at',
+        'fcm_token'
     ];
 
     /**
