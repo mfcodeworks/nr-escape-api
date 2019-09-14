@@ -36,6 +36,7 @@ Route::prefix('v1')->middleware('timer')->group(function () {
         });
 
         // resource routes
+        Route::get('search', 'ProfileController@search')->name('profile.search');
         Route::apiResource('profile', 'ProfileController')->only(['show']);
         Route::get('profile/{id}/posts', 'ProfileController@posts')->name('profile.posts');
         Route::post('profile/{id}/block', 'BlockController@block')->name('profile.block');

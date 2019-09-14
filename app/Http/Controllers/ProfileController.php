@@ -38,12 +38,40 @@ class ProfileController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function posts(Request $request, $id) {
-        // Select user by ID
+        // Select posts by user ID
         return response()->json(
             Post::where('author', '=', $id)
                 ->offset($request->offset | 0)
                 ->limit(15)
                 ->get()
         );
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function search(Request $request) {
+        // Format query
+        $query = $this->formatQuery($request->input('query'));
+
+        // Select user by ID
+        return response()->json(
+            User::where('username', 'like', $query)
+                ->limit(45)
+                ->get()
+        );
+    }
+
+    /**
+     * Format search query
+     *
+     * @param string $query
+     * @return string
+     */
+    private function formatQuery($query) {
+        return '%'.str_replace(' ', '%', $query).'%';
     }
 }
