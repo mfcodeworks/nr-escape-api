@@ -27,7 +27,7 @@ class Post extends Model
      */
     protected $with = [
         'author',
-        'recentComments',
+        'comments',
         'likes',
         'reposts',
         'repostOf'
@@ -59,13 +59,6 @@ class Post extends Model
 
     public function comments() {
         return $this->hasMany('App\Comment', 'reply_to');
-    }
-
-    // Return recent comments on post
-    public function recentComments() {
-        return $this->hasMany('App\Comment', 'reply_to')
-            ->orderBy('updated_at', 'desc')
-            ->limit(env('POST_COMMENT_LIMIT', 15));
     }
 
     public function likes() {
