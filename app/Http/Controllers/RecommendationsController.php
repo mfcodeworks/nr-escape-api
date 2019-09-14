@@ -28,7 +28,7 @@ class RecommendationsController extends Controller
         // Get a list of user ids
         $list = DB::table('following')
             ->select(
-                'following.user',
+                'following.user as user',
                 DB::Raw('count(*) as mutuals'),
                 DB::Raw('(SELECT count(id) FROM posts WHERE posts.author = following.user AND posts.created_at > DATE_SUB(now(), INTERVAL '.env('RECOMMENDED_ACTIVITY_PERIOD', '1 YEAR').')) as activity'),
             )
@@ -43,9 +43,13 @@ class RecommendationsController extends Controller
             ->get();
 
         // Transform userID to user object
+        $this->recommendations = User::find($list->pluck('user')->toArray());
+
+        /* UPDATED:
         foreach ($list as $result) {
             $this->recommendations[] = User::find($result->user);
         }
+        */
 
         return response()->json($this->recommendations);
     }

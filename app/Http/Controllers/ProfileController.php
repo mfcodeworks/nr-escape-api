@@ -26,6 +26,6 @@ class ProfileController extends Controller
      */
     public function show($id) {
         // Select user by ID
-        return User::find($id);
+        return response()->json(User::find($id));
     }
 }

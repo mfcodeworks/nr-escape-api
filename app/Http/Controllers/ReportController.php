@@ -35,7 +35,7 @@ class ReportController extends Controller
                         'reported_user' => $id
                     ]);
                     event(new ProfileReported($report));
-                    return $report;
+                    return response()->json($report);
                 }
                 break;
 
@@ -50,10 +50,10 @@ class ReportController extends Controller
                         'reported_post' => $id
                     ]);
                     event(new PostReported($report));
-                    return $report;
+                    return response()->json($report);
                 }
         }
-        return $return;
+        return response()->json($return);
     }
 
     /**
@@ -70,7 +70,7 @@ class ReportController extends Controller
                 $reported = auth()->user()
                     ->profileReports
                     ->where('reported_user', $id)
-                    ->where(
+                    ->whereDate(
                         'created_at',
                         '>',
                         Carbon::now()->subDay()->toDateTimeString()
@@ -82,7 +82,7 @@ class ReportController extends Controller
                 $reported = auth()->user()
                     ->postReports
                     ->where('reported_post', $id)
-                    ->where(
+                    ->whereDate(
                         'created_at',
                         '>',
                         Carbon::now()->subDay()->toDateTimeString()

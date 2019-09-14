@@ -69,7 +69,7 @@ class PostController extends Controller
         // Dispatch event, either new post or repost
         $post->repost ? event(new NewPostRepost($post)) : event(new NewPost($post));
 
-        return $post;
+        return response()->json($post);
     }
 
     /**
@@ -80,7 +80,7 @@ class PostController extends Controller
      */
     public function show($id) {
         // Select post by ID
-        return Post::find($id);
+        return response()->json(Post::find($id));
     }
 
     /**
@@ -100,7 +100,7 @@ class PostController extends Controller
         }
 
         $post->fill($request->all())->save();
-        return $post::find($id);
+        return response()->json($post::find($id));
     }
 
     /**
@@ -117,7 +117,7 @@ class PostController extends Controller
         if (!$post) return $this->unauthorized();
         else {
             $post->delete();
-            return response()->json('', 204);
+            return response()->json('success', 204);
         }
     }
 
