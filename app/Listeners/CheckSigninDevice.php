@@ -56,7 +56,7 @@ class CheckSigninDevice
                 ->first();
 
             // Send unknown device email
-            $user = User::find($agent['user_id']);
+            $user = User::findOrFail($agent['user_id']);
             $beautymail = app()->make('Snowfire\Beautymail\Beautymail');
             $beautymail->send('emails.unknown-device', ['agent' => $agent], function($message) use ($user) {
                 $message

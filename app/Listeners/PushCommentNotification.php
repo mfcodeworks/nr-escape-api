@@ -43,18 +43,18 @@ class PushCommentNotification implements ShouldQueue
         // Don't create notificaton if same user
         if (
             $event->comment->author ==
-            Post::find($event->comment->reply_to)
+            Post::findOrFail($event->comment->reply_to)
                 ->author()
                 ->value('id')
         ) return;
 
         // Get Post Author FCM Token
-        $fcm_to = Post::find($event->comment->reply_to)
+        $fcm_to = Post::findOrFail($event->comment->reply_to)
             ->author()
             ->value('fcm_token');
 
         // Get username that commented
-        $user = User::find($event->comment->author)->value('username');
+        $user = User::findOrFail($event->comment->author)->value('username');
 
         // Create Notification
         $notification = (new PayloadNotificationBuilder())

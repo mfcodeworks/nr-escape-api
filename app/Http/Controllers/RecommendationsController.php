@@ -43,11 +43,11 @@ class RecommendationsController extends Controller
             ->get();
 
         // Transform userID to user object
-        $this->recommendations = User::find($list->pluck('user')->toArray());
+        $this->recommendations = User::findOrFail($list->pluck('user')->toArray());
 
         /* UPDATED:
         foreach ($list as $result) {
-            $this->recommendations[] = User::find($result->user);
+            $this->recommendations[] = User::findOrFail($result->user);
         }
         */
 

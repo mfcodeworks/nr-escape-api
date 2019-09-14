@@ -80,7 +80,7 @@ class PostController extends Controller
      */
     public function show($id) {
         // Select post by ID
-        return response()->json(Post::find($id));
+        return response()->json(Post::findOrFail($id));
     }
 
     /**
@@ -100,7 +100,7 @@ class PostController extends Controller
         }
 
         $post->fill($request->all())->save();
-        return response()->json($post::find($id));
+        return response()->json($post::findOrFail($id));
     }
 
     /**

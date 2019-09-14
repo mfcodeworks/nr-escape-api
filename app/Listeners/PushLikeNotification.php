@@ -43,13 +43,13 @@ class PushLikeNotification implements ShouldQueue
         // Don't create notificaton if same user
         if (
             $event->like->user ==
-            Post::find($event->like->post)
+            Post::findOrFail($event->like->post)
             ->author()
             ->value('id')
         ) return;
 
         // Get Post Author FCM Token
-        $fcm_to = Post::find($event->like->post)
+        $fcm_to = Post::findOrFail($event->like->post)
             ->author()
             ->value('fcm_token');
 

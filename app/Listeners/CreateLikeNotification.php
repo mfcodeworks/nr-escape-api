@@ -29,7 +29,7 @@ class CreateLikeNotification implements ShouldQueue
     public function handle(NewPostLike $event)
     {
         // Get related users
-        $to = Post::find($event->like->post)
+        $to = Post::findOrFail($event->like->post)
             ->author()
             ->value('id');
         $from = $event->like->user;

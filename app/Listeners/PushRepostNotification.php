@@ -43,13 +43,13 @@ class PushRepostNotification implements ShouldQueue
         // Don't create notificaton if same user
         if (
             $event->post->author ==
-            Post::find($event->post->repost_of)
+            Post::findOrFail($event->post->repost_of)
             ->author()
             ->value('id')
         ) return;
 
         // Get Post Author FCM Token
-        $fcm_to = Post::find($event->post->repost_of)
+        $fcm_to = Post::findOrFail($event->post->repost_of)
             ->author()->value('fcm_token');
 
         // Get username that commented

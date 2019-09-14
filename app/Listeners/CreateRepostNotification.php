@@ -29,7 +29,7 @@ class CreateRepostNotification implements ShouldQueue
     public function handle(NewPostRepost $event)
     {
         // Get related users
-        $to = Post::find($event->post->repost_of)
+        $to = Post::findOrFail($event->post->repost_of)
             ->author()
             ->value('id');
         $from = $event->post->author;

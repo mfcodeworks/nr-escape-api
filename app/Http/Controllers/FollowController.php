@@ -32,7 +32,7 @@ class FollowController extends Controller
         // Check if user has blocked, or been blocked, by profile
         } else if (
             auth()->user()->blocks->where('blocked_user', $id)->first() ||
-            User::find($id)->blocks->where('blocked_user', auth()->user()->id)->first()
+            User::findOrFail($id)->blocks->where('blocked_user', auth()->user()->id)->first()
         ) {
             return response()->json([
                 'error' => 'Profile has been blocked, or blocked you'

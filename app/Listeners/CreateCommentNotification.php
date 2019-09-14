@@ -29,7 +29,7 @@ class CreateCommentNotification implements ShouldQueue
     public function handle(NewComment $event)
     {
         // Get related users
-        $to = Post::find($event->comment->reply_to)
+        $to = Post::findOrFail($event->comment->reply_to)
             ->author()
             ->value('id');
         $from = $event->comment->author;

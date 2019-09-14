@@ -49,7 +49,7 @@ class CheckForUserMentions implements ShouldQueue
         preg_match_all('/\B(\@[0-9a-zA-Z\-\_]+\b)/', $event->post->caption, $matches);
 
         // Get username of OP
-        $username = User::find($event->post->author)
+        $username = User::findOrFail($event->post->author)
             ->value('username');
 
         // Notify each match of tag
@@ -60,7 +60,7 @@ class CheckForUserMentions implements ShouldQueue
             if (User::where('username', ltrim($match, '@'))
                     ->first()
                     ->value('id')
-                === User::find($event->post->author)
+                === User::findOrFail($event->post->author)
                     ->value('id')
             ) continue;
 
@@ -98,7 +98,7 @@ class CheckForUserMentions implements ShouldQueue
         preg_match_all('/\B(\@[0-9a-zA-Z\-\_]+\b)/', $event->comment->text, $matches);
 
         // Get username of OP
-        $username = User::find($event->comment->author)
+        $username = User::findOrFail($event->comment->author)
             ->value('username');
 
         // Notify each match of tag
@@ -109,7 +109,7 @@ class CheckForUserMentions implements ShouldQueue
             if (User::where('username', ltrim($match, '@'))
                     ->first()
                     ->value('id')
-                === User::find($event->comment->author)
+                === User::findOrFail($event->comment->author)
                     ->value('id')
             ) continue;
 

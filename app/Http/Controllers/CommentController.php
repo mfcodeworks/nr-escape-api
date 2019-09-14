@@ -75,7 +75,7 @@ class CommentController extends Controller
      */
     public function show($id) {
         // Select comment by ID
-        return response()->json(Comment::find($id));
+        return response()->json(Comment::findOrFail($id));
     }
 
     /**
@@ -95,7 +95,7 @@ class CommentController extends Controller
         }
 
         $comment->fill($request->all())->save();
-        return response()->json(Comment::find($id));
+        return response()->json(Comment::findOrFail($id));
     }
 
     /**
