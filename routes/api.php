@@ -37,6 +37,7 @@ Route::prefix('v1')->middleware('timer')->group(function () {
 
         // resource routes
         Route::apiResource('profile', 'ProfileController')->only(['show']);
+        Route::get('profile/{id}/posts', 'ProfileController@posts')->name('profile.posts');
         Route::post('profile/{id}/block', 'BlockController@block')->name('profile.block');
         Route::post('profile/{id}/unblock', 'BlockController@unblock')->name('profile.unblock');
         Route::post('profile/{id}/follow', 'FollowController@follow')->name('profile.follow');

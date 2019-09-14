@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\User;
+use App\Post;
 use Illuminate\Http\Request;
 
 class ProfileController extends Controller
@@ -27,5 +28,22 @@ class ProfileController extends Controller
     public function show($id) {
         // Select user by ID
         return response()->json(User::findOrFail($id));
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param int $id
+     * @param \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function posts(Request $request, $id) {
+        // Select user by ID
+        return response()->json(
+            Post::where('author', '=', $id)
+                ->offset($request->offset | 0)
+                ->limit(15)
+                ->get()
+        );
     }
 }
