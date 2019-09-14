@@ -3,6 +3,9 @@
 namespace App\Http\Middleware;
 
 use App\User;
+use App\Post;
+use App\Comment;
+use Illuminate\Support\Facades\Log;
 use Closure;
 
 class CheckBlocked
@@ -21,25 +24,25 @@ class CheckBlocked
         // Get response from controller
         $response = $next($request);
 
+        Log::alert(json_encode($request->route()));
+
         // Switch route to check variables
         switch ($request->route()->getName()) {
             case 'profile.show':
-                // Get response body
-                $body = json_decode($response->getOriginalContent(), true);
-                $check = $body['id'];
+                $check = $request->route('profile');
                 break;
             case 'comment.show':
+                $check = Comment::findOrFail($request->route('comment'))->author;
+                break;
             case 'post.show':
-                // Get response body
-                $body = json_decode($response->getOriginalContent(), true);
-                $check = $body['author']['id'];
+                $check = Post::findOrFail($request->route('post'))->author;
                 break;
         }
 
         // Check if user has blocked, or been blocked, by profile
         if (
             auth()->user()->blocks->where('blocked_user', $check)->first() ||
-            User::find($check)->blocks->where('blocked_user', auth()->user()->id)->first()
+            User::findOrFail($check)->blocks->where('blocked_user', auth()->user()->id)->first()
         ) {
             return response()->json([
                 'error' => 'Profile has been blocked'
