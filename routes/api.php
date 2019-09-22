@@ -26,7 +26,9 @@ Route::prefix('v1')->middleware('timer')->group(function () {
         // user routes
         Route::prefix('me')->group(function() {
             Route::get('/', 'AuthController@user')->name('user.show');
-            Route::post('fcm', 'AuthController@fcm')->name('user.fcm');
+            Route::post('fcm/token', 'FcmController@token')->name('user.fcm.token');
+            Route::post('fcm/subscribe/{$topic}', 'FcmController@subscribe')->name('user.fcm.subscribe');
+            Route::post('fcm/unsubscribe/{$topic}', 'FcmController@unsubscribe')->name('user.fcm.unsubscribe');
             Route::put('update', 'AuthController@update')->name('user.update');
             Route::post('deactivate', 'AuthController@deactivate')->name('user.destroy');
             Route::get('notifications', 'NotificationController@index')->name('user.notifications');
