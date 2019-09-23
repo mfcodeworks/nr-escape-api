@@ -7,8 +7,10 @@ use App\Device;
 use Jenssegers\Agent\Agent;
 use App\Events\UserSignin;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-class CheckSigninDevice
+class CheckSigninDevice implements ShouldQueue
 {
     /**
      * Create the event listener.
