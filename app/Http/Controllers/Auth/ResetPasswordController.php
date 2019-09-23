@@ -58,7 +58,9 @@ class ResetPasswordController extends Controller
             return response()->json('success', 204);
         } else {
             return response()->json([
-                'error' => ['email' => trans($response)]
+                'error' => [
+                    'email' => trans($response)
+                ]
             ], 400);
         }
     }

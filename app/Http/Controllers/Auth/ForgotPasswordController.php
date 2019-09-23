@@ -45,7 +45,8 @@ class ForgotPasswordController extends Controller
             return response()->json('success', 204);
         } else {
             return response()->json([
-                'error' => 'Unable to send reset link'
+                'error' => 'Unable to send reset link',
+                'payload' => $response
             ], 401);
         }
     }
