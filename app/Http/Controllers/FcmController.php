@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Kreait\Firebase;
 use Kreait\Firebase\Messaging\CloudMessage;
 use App\User;
+use FCM;
+use FCMGroup;
 
 class FcmController extends Controller
 {
@@ -30,8 +32,8 @@ class FcmController extends Controller
 
         // If group token add, otherwise create
         $key = ($groupToken)
-        ? FCMGroup::addToGroup($groupName, $groupToken, $token)
-        : FCMGroup::createGroup($groupName, $token);
+        ? FCMGroup::addToGroup($groupName, $groupToken, [$token])
+        : FCMGroup::createGroup($groupName, [$token]);
 
         // Update group token
         $save = $user->fill([
