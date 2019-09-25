@@ -32,9 +32,8 @@ class PostController extends Controller
         $validator = Validator::make($request->all(), [
             'author' => 'required|exists:users,id',
             'type' => 'required|string',
-            'media' => 'string|nullable',
             'caption' => 'string|nullable',
-            'repost' => 'required|boolean',
+            'repost' => 'required',
             'repost_of' => 'integer|nullable'
         ], [
             'author.exists' => 'Author not found'
@@ -47,16 +46,22 @@ class PostController extends Controller
         }
 
         // Check if no caption, media, or repost
-        if (!$request->caption && !$request->media && !$request->repost) {
+        if (!$request->caption && !isset($request->media) && !$request->repost) {
             return response()->json([
                 'error' => 'Post cannot be empty, we need a little text or something'
             ]);
         }
 
+        $postData = $request->all();
+
         // If media is present, handle the media (either URL or image/video)
-        if ($request->media) {
-            $request->media = $this->handleMedia($request->media);
-            if (!$request->media) {
+        if ($request->hasFile('media')) {
+            $user = auth()->user()->id;
+            $path = Storage::disk('spaces')->put("SocialHub/author/{$user}/posts", $request->media, 'public');
+            $postData['media'] = Storage::disk('spaces')->url($path);
+        } else if ($request->media) {
+            $postData['media'] = $this->handleMedia($request->media);
+            if (!$postData['media']) {
                 return response()->json([
                     'error' => 'It looks like the media for this post isn\'t anything we recognize'
                 ], 400);
@@ -64,7 +69,7 @@ class PostController extends Controller
         }
 
         // Create new post
-        $post = Post::create($request->all());
+        $post = Post::create($postData);
 
         // Dispatch event, either new post or repost
         $post->repost ? event(new NewPostRepost($post)) : event(new NewPost($post));
@@ -140,7 +145,7 @@ class PostController extends Controller
             // Create filepath
             $filename = uniqid() . "." . $extension;
             $id = auth()->user()->id;
-            $mediaPath = "SocialHub/author/{$id}/comments/$filename";
+            $mediaPath = "SocialHub/author/{$id}/posts/$filename";
 
             // Save media to DigitalOcean Spaces
             Storage::disk('spaces')->put($mediaPath, base64_decode($base64), 'public');
