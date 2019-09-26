@@ -40,17 +40,27 @@ class RecommendationsController extends Controller
             ->havingRaw('mutuals >= ?', [env('USER_RECOMMENDED_MUTUAL', 3)])
             ->orderBy('mutuals', 'desc')
             ->orderBy('activity', 'desc')
+            ->limit(30)
             ->get();
 
-        // Transform userID to user object
-        $this->recommendations = User::findOrFail($list->pluck('user')->toArray());
+        // Get a list of user ids without any mutuals
+        if (!$list->first()) {
+            $list = DB::table('users')
+                ->select(
+                    'id as user',
+                    DB::Raw('(SELECT count(id) FROM posts WHERE posts.author = users.id AND posts.created_at > DATE_SUB(now(), INTERVAL '.env('RECOMMENDED_ACTIVITY_PERIOD', '1 YEAR').')) as activity'),
+                )
+                ->groupBy('user')
+                ->havingRaw('activity > ?', [env('USER_RECOMMENDED_ACTIVITY', 10)])
+                ->orderBy('activity', 'desc')
+                ->limit(30)
+                ->get();
 
-        /* UPDATED:
-        foreach ($list as $result) {
-            $this->recommendations[] = User::findOrFail($result->user);
         }
-        */
 
-        return response()->json($this->recommendations);
+        // Transform userID to user object
+        $this->recommendations = User::with('recentPosts')->findOrFail($list->pluck('user')->toArray());
+
+        return response()->json($this->recommendations->shuffle());
     }
 }

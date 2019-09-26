@@ -115,6 +115,8 @@ class PostController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function destroy($id) {
+        // TODO: On delete check removed comments and notifications
+        
         // Get post from posts by user
         $post = auth()->user()->posts()->find($id);
 
