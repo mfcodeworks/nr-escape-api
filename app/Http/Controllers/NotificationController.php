@@ -16,15 +16,18 @@ class NotificationController extends Controller
      */
     public function index(Request $request) {
         // Return notifications for authenticated user, within the last 4 weeks
-        return auth()->user()
-            ->notifications()
-            ->where(
-                'created_at',
-                '>',
-                Carbon::now()->subWeeks(env('USER_NOTIFICATIONS_PERIOD', 30))->toDateTimeString()
-            )
-            ->orderBy('created_at', 'desc')
-            ->get();
+        return response()->json(
+            auth()->user()
+                ->notifications()
+                ->with('comment', 'post')
+                ->where(
+                    'created_at',
+                    '>',
+                    Carbon::now()->subWeeks(env('USER_NOTIFICATIONS_PERIOD', 30))->toDateTimeString()
+                )
+                ->orderBy('created_at', 'desc')
+                ->get()
+        );
     }
 
     /**

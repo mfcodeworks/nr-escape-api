@@ -26,8 +26,7 @@ class Notification extends Model
      */
     protected $with = [
         'for',
-        'from',
-        'post'
+        'from'
     ];
 
     public function for() {
@@ -40,5 +39,9 @@ class Notification extends Model
 
     public function post() {
         return $this->belongsTo('App\Post', 'post_id');
+    }
+
+    public function comment() {
+        return $this->belongsTo('App\Comment', 'comment_id');
     }
 }
