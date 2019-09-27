@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
+    // TODO: Set Rememberable
     use HasApiTokens, Notifiable;
 
     /**

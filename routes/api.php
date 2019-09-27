@@ -14,7 +14,7 @@ use Illuminate\Http\Request;
 */
 
 // API: v1 routes
-Route::prefix('v1')->middleware('timer')->group(function () {
+Route::prefix('v1')->group(function () {
     // login/signup no auth routes
     Route::post('signup', 'AuthController@register')->name('user.store');
     Route::post('login', 'AuthController@login')->name('user.login');
@@ -22,9 +22,9 @@ Route::prefix('v1')->middleware('timer')->group(function () {
     Route::post('reset', 'Auth\ResetPasswordController@reset')->name('user.reset');
 
     // authorised routes
-    Route::middleware(['auth:api', 'user.status'])->group(function() {
+    Route::middleware(['auth:api', 'user.status'])->group(function () {
         // user routes
-        Route::prefix('me')->group(function() {
+        Route::prefix('me')->group(function () {
             Route::get('/', 'AuthController@user')->name('user.show');
             Route::post('fcm/token', 'FcmController@token')->name('user.fcm.token');
             Route::post('fcm/subscribe/{$topic}', 'FcmController@subscribe')->name('user.fcm.subscribe');
