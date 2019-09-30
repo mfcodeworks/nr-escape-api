@@ -64,7 +64,9 @@ class CommentController extends Controller
         // Send new comment event
         event(new NewComment($comment));
 
-        return response()->json($comment);
+        return response()->json(
+            Comment::find($comment->id)
+        );
     }
 
     /**

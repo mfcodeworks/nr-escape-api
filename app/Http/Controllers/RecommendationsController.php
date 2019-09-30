@@ -59,7 +59,9 @@ class RecommendationsController extends Controller
         }
 
         // Transform userID to user object
-        $this->recommendations = User::with('recentPosts')->findOrFail($list->pluck('user')->toArray());
+        $this->recommendations = User::with('recentPosts')
+            ->findOrFail($list->pluck('user')->toArray())
+            ->pluck('recentPosts');
 
         return response()->json($this->recommendations->shuffle());
     }

@@ -27,11 +27,11 @@ class Like extends Model
         'updated_at',
     ];
 
-    public function post() {
+    public function content() {
         return $this->belongsTo('App\Post', 'post');
     }
 
-    public function user() {
+    public function authpr() {
         return $this->belongsTo('App\User', 'user');
     }
 }

@@ -54,7 +54,7 @@ class Post extends Model
     ];
 
     public function author() {
-        return $this->belongsTo('App\User', 'author')->without('recentPosts');
+        return $this->belongsTo('App\User', 'author');
     }
 
     public function comments() {
@@ -62,7 +62,7 @@ class Post extends Model
     }
 
     public function likes() {
-        return $this->hasMany('App\Like', 'post');
+        return $this->hasMany('App\Like', 'post', 'id');
     }
 
     public function reposts() {
