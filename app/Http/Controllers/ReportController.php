@@ -16,6 +16,8 @@ class ReportController extends Controller
     /**
      * Store a newly created resource in storage.
      *
+     * TODO: Add comment report
+     *
      * @param \Illuminate\Http\Request $request
      * @param int $id
      * @return \Illuminate\Http\Response
