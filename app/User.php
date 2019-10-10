@@ -23,7 +23,8 @@ class User extends Authenticatable
         'bio',
         'contact_info',
         'settings',
-        'fcm_token'
+        'fcm_token',
+        'deactivated'
     ];
     protected $attributes = [
         'profile_pic' => 'https://glamsquad.sgp1.cdn.digitaloceanspaces.com/SocialHub/default/images/profile.svg',
