@@ -34,6 +34,17 @@ class ProfileController extends Controller
      * Display the specified resource.
      *
      * @param int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function showUsername($username) {
+        // Select user by ID
+        return response()->json(User::where('username', '=', $username)->first());
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param int $id
      * @param \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
