@@ -27,6 +27,6 @@ class CheckAccountStatus
             ], 401);
         }
 
-        return $next($request);;
+        return $next($request);
     }
 }
