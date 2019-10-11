@@ -73,10 +73,10 @@ class SearchController extends Controller
             ->toArray();
 
         // Filter tags from matches
-        foreach(array_merge($posts, $comments) as $tag) {
-            if (preg_match_all("/\B({$query['hash']}[a-zA-Z\-\_]*\b)/", $tag, $t)) {
-                $tags = array_merge($t[1], $tags);
-            }
+        $list = array_merge($posts, $comments);
+        foreach($list as $tag) {
+            preg_match_all("/{$query['hash']}[a-zA-Z\-\_0-9]*/i", $tag, $t);
+            $tags = array_merge($t[0], $tags);
         }
 
         // Find users matching query
@@ -85,12 +85,10 @@ class SearchController extends Controller
             ->get();
 
         // Return match array
-        return response()->json(
-            [
-                'users' => $users,
-                'hashtags' => array_unique($tags)
-            ]
-        );
+        return response()->json([
+            'users' => $users,
+            'hashtags' => array_values(array_unique($tags))
+        ]);
     }
 
     /**
