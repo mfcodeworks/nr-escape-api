@@ -14,14 +14,17 @@ class FeedController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function __invoke(Request $request) {
+        $feed = Post::whereIn('author', auth()->user()->following->pluck('following_user'))
+            ->latest()
+            ->limit(30)
+            ->without('reposts')
+            ->withCount('reposts');
+
+        if ($request->offset) {
+            $feed = $feed->where('id', '<', $request->offset);
+        }
+
         // Get posts from users, where author is followed by authenticated user, ordered by date, limit 30
-        return response()->json(
-            Post::whereIn('author', auth()->user()->following->pluck('following_user'))
-                ->latest()
-                ->limit(30)
-                ->without('reposts')
-                ->withCount('reposts')
-                ->get()
-        );
+        return response()->json($feed->get());
     }
 }

@@ -49,13 +49,15 @@ class ProfileController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function posts(Request $request, $id) {
+        $posts = Post::where('author', '=', $id)
+            ->latest()
+            ->limit(15);
+
+        if ($request->offset) {
+            $posts = $posts->where('id', '<', $request->offset);
+        }
+
         // Select posts by user ID
-        return response()->json(
-            Post::where('author', '=', $id)
-                ->offset($request->offset | 0)
-                ->latest()
-                ->limit(15)
-                ->get()
-        );
+        return response()->json($posts->get());
     }
 }

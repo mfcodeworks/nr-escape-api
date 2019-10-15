@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\User;
+use App\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -21,10 +22,11 @@ class RecommendationsController extends Controller
      * - order by mutual_following desc
      * - order by activity desc
      *
+     * @param Request $request
      * @return \Illuminate\Http\Response
      */
 
-    public function __invoke() {
+    public function __invoke(Request $request) {
         // Get a list of user ids
         $list = DB::table('following')
             ->select(
@@ -59,10 +61,22 @@ class RecommendationsController extends Controller
         }
 
         // Transform userID to user object
-        $this->recommendations = User::with('recentPosts')
-            ->findOrFail($list->pluck('user')->toArray())
-            ->pluck('recentPosts');
+        $this->recommendations = Post::whereIn(
+            'author',
+            $list->pluck('user')->toArray()
+        )->limit(30)
+        ->latest();
 
-        return response()->json($this->recommendations->shuffle());
+        if ($request->notIn) {
+            $this->recommendations->whereNotIn('id', json_decode($request->notIn));
+        }
+
+        /*
+        $this->recommendations = User::with('posts')
+            ->findOrFail($list->pluck('user')->toArray())
+            ->pluck('recentPosts')[0];
+            */
+
+        return response()->json($this->recommendations->get());
     }
 }

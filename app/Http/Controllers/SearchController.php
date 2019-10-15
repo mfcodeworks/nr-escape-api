@@ -15,37 +15,71 @@ class SearchController extends Controller
         // Format query
         $query = $this->formatQuery($request->input('query'));
 
+        // If the request type is hashtag, find the posts containing this hashtag
         if (isset($request->type) && $request->type == 'hashtag') {
 
+            /**
+             * Find posts
+             * - within the past 24 hours
+             * - with the most comments
+             * - then with the most likes
+             * - then the most recent
+             * - limit to top 30 posts
+             */
             $topPosts = Post::whereDate('created_at', '>=', now()->subDays(1)->toDateTimeString())
                 ->where('caption', 'REGEXP', $query['hash'].'[a-zA-Z\-\_]*')
                 ->orderByRaw('(select count(*) from comments where reply_to = posts.id) desc')
                 ->orderByRaw('(select count(*) from likes where post = posts.id) desc')
-                ->orderBy('created_at', 'desc')
-                ->get();
+                ->limit(30)
+                ->latest();
 
+            $topComments = Comment::whereDate('created_at', '>=', now()->subDays(1)->toDateTimeString())
+                ->where('text', 'REGEXP', $query['hash'].'[a-zA-Z\-\_]*')
+                ->groupBy('reply_to')
+                ->orderBy('reply_to', 'desc')
+                ->orderByRaw('(select count(*) from likes where post = comments.reply_to) desc')
+                ->with('post')
+                ->limit(30)
+                ->latest();
+
+            $recentPosts = Post::where('caption', 'REGEXP', $query['hash'].'[a-zA-Z\-\_]*')
+                ->limit(30)
+                ->latest();
+
+            $recentComments = Comment::where('text', 'REGEXP', $query['hash'].'[a-zA-Z\-\_]*')
+                ->limit(30)
+                ->with('post')
+                ->latest();
+
+            /**
+             * Add offsets if needed
+             */
+            if ($request->topNotIn) {
+                $topPosts->where('id', '>', json_decode($request->topNotIn));
+                $topComments->where('repy_to', '>', json_decode($request->topNotIn));
+            }
+            if ($request->recentNotIn) {
+                $recentPosts->where('id', '>', json_decode($request->topNotIn));
+                $recentComments->where('repy_to', '>', json_decode($request->topNotIn));
+            }
+
+            /**
+             * Fetch posts and comments from the built queries, then merge the arrays and return
+             *
+             */
             return response()->json([
                 'recent' => array_merge(
-                    Post::where('caption', 'REGEXP', $query['hash'].'[a-zA-Z\-\_]*')
-                        ->latest()
-                        ->get()
+                    $recentPosts->get()
                         ->toArray(),
-                    Comment::where('text', 'REGEXP', $query['hash'].'[a-zA-Z\-\_]*')
-                        ->latest()
-                        ->with('post')
+                    $recentComments->whereNotIn('reply_to', $recentPosts->pluck('id'))
                         ->get()
                         ->pluck('post')
                         ->toArray()
                 ),
                 'top' => array_merge(
-                    $topPosts->toArray(),
-                    Comment::whereNotIn('reply_to', $topPosts->pluck('id'))
-                        ->whereDate('created_at', '>=', now()->subDays(1)->toDateTimeString())
-                        ->where('text', 'REGEXP', $query['hash'].'[a-zA-Z\-\_]*')
-                        ->groupBy('reply_to')
-                        ->orderBy('reply_to', 'desc')
-                        ->orderByRaw('(select count(*) from likes where post = comments.reply_to) desc')
-                        ->with('post')
+                    $topPosts->get()
+                        ->toArray(),
+                    $topComments->whereNotIn('reply_to', $topPosts->pluck('id'))
                         ->get()
                         ->pluck('post')
                         ->toArray()
@@ -60,6 +94,7 @@ class SearchController extends Controller
         $posts = DB::table('posts')
             ->select('caption')
             ->where('caption', 'REGEXP', $query['hash'].'[a-zA-Z\-\_]*')
+            ->limit(50)
             ->get()
             ->pluck('caption')
             ->toArray();
@@ -68,6 +103,9 @@ class SearchController extends Controller
         $comments = DB::table('comments')
             ->select('text')
             ->where('text', 'REGEXP', $query['hash'].'[a-zA-Z\-\_]*')
+            ->groupBy('reply_to')
+            ->orderBy('reply_to', 'desc')
+            ->limit(50)
             ->get()
             ->pluck('text')
             ->toArray();

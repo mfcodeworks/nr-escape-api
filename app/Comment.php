@@ -28,10 +28,11 @@ class Comment extends Model
     ];
 
     public function author() {
-        return $this->belongsTo('App\User', 'author')->without('recentPosts');
+        return $this->belongsTo('App\User', 'author');
     }
 
     public function post() {
-        return $this->belongsTo('App\Post', 'reply_to')->without('recentComments', 'author');
+        return $this->belongsTo('App\Post', 'reply_to')
+            ->without('comments');
     }
 }

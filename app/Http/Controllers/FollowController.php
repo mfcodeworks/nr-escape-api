@@ -13,6 +13,8 @@ class FollowController extends Controller
     /**
      * Store a newly created resource in storage.
      *
+     * TODO: If account is private, create request not active follower
+     *
      * @param \Illuminate\Http\Request  $request
      * @param int $id
      * @return \Illuminate\Http\Response
