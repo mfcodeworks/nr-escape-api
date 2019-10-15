@@ -45,6 +45,7 @@ Route::prefix('v1')->group(function () {
         Route::post('profile/{id}/block', 'BlockController@block')->name('profile.block');
         Route::post('profile/{id}/unblock', 'BlockController@unblock')->name('profile.unblock');
         Route::post('profile/{id}/follow', 'FollowController@follow')->name('profile.follow');
+        // TODO: Create approve/decline request routes
         Route::post('profile/{id}/unfollow', 'FollowController@unfollow')->name('profile.unfollow');
         Route::post('profile/{id}/report', 'ReportController@store')->name('profile.report');
         Route::apiResource('notification', 'NotificationController')->only(['index', 'show']);
