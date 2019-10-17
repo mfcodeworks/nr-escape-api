@@ -15,7 +15,21 @@ class CreateFollowingRequestsTable extends Migration
     {
         Schema::create('following_requests', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->unsignedBigInteger('user');
+            $table->unsignedBigInteger('following_user');
             $table->timestamps();
+
+            // Following references owner user, on owner delete remove following
+            $table->foreign('user')
+                ->references('id')
+                ->on('users')
+                ->onDelete('cascade');
+
+            // Following references user, on user delete remove following
+            $table->foreign('following_user')
+                ->references('id')
+                ->on('users')
+                ->onDelete('cascade');
         });
     }
 

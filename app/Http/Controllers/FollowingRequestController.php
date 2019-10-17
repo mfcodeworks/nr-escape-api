@@ -8,78 +8,49 @@ use Illuminate\Http\Request;
 class FollowingRequestController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
+     * Approve following request
      *
      * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function approve(Request $request, $id)
     {
-        //
+        $followingRequest = FollowingRequest::where('user', '=', $id)
+            ->where('following_user', '=', auth()->user()->id)
+            ->first();
+
+        return response()->json(
+            $followingRequest->approve()
+        );
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  \App\FollowingRequest  $followingRequest
-     * @return \Illuminate\Http\Response
-     */
-    public function show(FollowingRequest $followingRequest)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\FollowingRequest  $followingRequest
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(FollowingRequest $followingRequest)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
+     * Decline following request
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\FollowingRequest  $followingRequest
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, FollowingRequest $followingRequest)
+    public function decline(Request $request, $id)
     {
-        //
+        $followingRequest = FollowingRequest::where('user', '=', $id)
+            ->where('following_user', '=', auth()->user()->id)
+            ->first();
+
+        return response()->json(
+            $followingRequest->decline()
+        );
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Return user following requests
      *
-     * @param  \App\FollowingRequest  $followingRequest
      * @return \Illuminate\Http\Response
      */
-    public function destroy(FollowingRequest $followingRequest)
-    {
-        //
+    public function requests() {
+        return response()->json(
+            auth()->user()->followingRequest
+        );
     }
 }

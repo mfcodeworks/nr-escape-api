@@ -50,12 +50,26 @@ class PushFollowerNotification implements ShouldQueue
             ->value('username');
 
         // Create Notification
-        $notification = (new PayloadNotificationBuilder())
-            ->setTitle('New Follower')
-            ->setBody("{$username} followed you")
-            ->build();
+        switch (true) {
+            case $event->following instanceof FollowingRequest:
+                $notification = (new PayloadNotificationBuilder())
+                    ->setTitle('New Follower Request')
+                    ->setBody("{$username} requested to follow you")
+                    ->build();
 
-        // Send Notification
-        $response = FCM::sendToGroup($fcm_to, null, $notification, null);
+                // Send Notification
+                $response = FCM::sendToGroup($fcm_to, null, $notification, null);
+                break;
+
+            case $event->following instanceof Following:
+                $notification = (new PayloadNotificationBuilder())
+                    ->setTitle('New Follower')
+                    ->setBody("{$username} followed you")
+                    ->build();
+
+                // Send Notification
+                $response = FCM::sendToGroup($fcm_to, null, $notification, null);
+                break;
+        }
     }
 }

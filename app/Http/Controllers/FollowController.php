@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\User;
 use App\Following;
+use App\FollowingRequest;
 use App\Events\NewFollower;
 use Validator;
 
@@ -12,8 +13,6 @@ class FollowController extends Controller
 {
     /**
      * Store a newly created resource in storage.
-     *
-     * TODO: If account is private, create request not active follower
      *
      * @param \Illuminate\Http\Request  $request
      * @param int $id
@@ -31,6 +30,17 @@ class FollowController extends Controller
                 'error' => 'User already followed'
             ], 403);
 
+        // Check if request already made
+        } else if (
+            auth()->user()
+                ->followingRequest
+                ->where('following_user', $id)
+                ->first()
+        ) {
+            return response()->json([
+                'error' => 'Follow already requested'
+            ], 403);
+
         // Check if user has blocked, or been blocked, by profile
         } else if (
             auth()->user()->blocks->where('blocked_user', $id)->first() ||
@@ -41,15 +51,23 @@ class FollowController extends Controller
             ], 403);
         }
 
-        // Create profile follow
-        $follow = Following::create([
+        // Create profile follow or request depending on users privacy setting
+        $follow = User::findOrFail($id)->settings['private_account']
+        ? FollowingRequest::create([
+            'following_user' => $id,
+            'user' => auth()->user()->id
+        ]) : Following::create([
             'following_user' => $id,
             'user' => auth()->user()->id
         ]);
 
         event(new NewFollower($follow));
 
-        return response()->json($follow);
+        return response()->json(
+            $follow instanceof FollowingRequest
+                ? ['status' => 'requested']
+                : $follow
+        );
     }
 
     /**

@@ -2,9 +2,26 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Following;
 
-class FollowingRequest extends Model
+class FollowingRequest extends Following
 {
-    // TODO: Create request
+    // Model table
+    protected $table = 'following_requests';
+
+    /**
+     * Attributes, with, and related objects inherited from App\Following
+     */
+
+    // Model functions
+
+    public function approve() {
+        $follow = Following::create($this->toArray());
+        $this->delete();
+        return $follow;
+    }
+
+    public function decline() {
+        return $this->delete();
+    }
 }

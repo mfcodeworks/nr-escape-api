@@ -4,6 +4,8 @@ namespace App\Listeners;
 
 use App\Notification;
 use App\Events\NewFollower;
+use App\Following;
+use App\FollowingRequest;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
@@ -35,10 +37,17 @@ class CreateFollowerNotification implements ShouldQueue
         if ($to == $from) return;
 
         // Create notification
-        Notification::create([
-            'for_author' => $to,
-            'from_user' => $from,
-            'type' => 'followed'
-        ]);
+        switch (true) {
+            case $event->following instanceof FollowingRequest:
+                break;
+
+            case $event->following instanceof Following:
+                Notification::create([
+                    'for_author' => $to,
+                    'from_user' => $from,
+                    'type' => 'followed'
+                ]);
+                break;
+        }
     }
 }

@@ -30,7 +30,6 @@ class Following extends Model
         'updated_at',
     ];
 
-
     /**
      * The related objects that should be included
      *

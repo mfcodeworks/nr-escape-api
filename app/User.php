@@ -28,7 +28,8 @@ class User extends Authenticatable
     ];
     protected $attributes = [
         'profile_pic' => 'https://glamsquad.sgp1.cdn.digitaloceanspaces.com/SocialHub/default/images/profile.svg',
-        'deactivated' => 0
+        'deactivated' => 0,
+        'settings' => '{"private_account": false, "unknown_devices": true, "display_likes": true}'
     ];
 
     /**
@@ -37,7 +38,6 @@ class User extends Authenticatable
      * @var array
      */
     protected $with = [
-        //'recentPosts',
         'following',
         'followers'
     ];
@@ -59,7 +59,6 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'settings',
         'email',
         'deactivated',
         'banned_until',
@@ -113,6 +112,11 @@ class User extends Authenticatable
     // Return this users following
     public function following() {
         return $this->hasMany('App\Following', 'user');
+    }
+
+    // Return this users following
+    public function followingRequest() {
+        return $this->hasMany('App\FollowingRequest', 'user');
     }
 
     // Return this users followers

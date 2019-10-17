@@ -55,8 +55,8 @@ class AuthController extends Controller
         // Signup success response
         return response()->json([
             'token' => $token,
-            'email' => $request->email,
-            'settings' => [],
+            'email' => $user->email,
+            'settings' => $user->settings,
             'profile' => $user
         ], 201);
     }
@@ -99,7 +99,7 @@ class AuthController extends Controller
             return response()->json([
                 'token' => $token,
                 'email' => auth()->user()->email,
-                'settings' => [],
+                'settings' => auth()->user()->settings,
                 'profile' => auth()->user()
             ], 201);
 
@@ -142,7 +142,9 @@ class AuthController extends Controller
 
         // Get authorised user account
         $user = auth()->user()->fill($data)->save();
-        return response()->json($this->user($request));
+        return response()->json(
+            auth()->user()->makeVisible(['fcm_token', 'settings', 'email'])
+        );
     }
 
     /**

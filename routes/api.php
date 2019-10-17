@@ -27,14 +27,20 @@ Route::prefix('v1')->group(function () {
         Route::prefix('me')->group(function () {
             Route::get('/', 'AuthController@user')->name('user.show');
             Route::post('fcm/token', 'FcmController@token')->name('user.fcm.token');
-            Route::post('fcm/subscribe/{$topic}', 'FcmController@subscribe')->name('user.fcm.subscribe');
-            Route::post('fcm/unsubscribe/{$topic}', 'FcmController@unsubscribe')->name('user.fcm.unsubscribe');
+            Route::post('fcm/subscribe/{topic}', 'FcmController@subscribe')->name('user.fcm.subscribe');
+            Route::post('fcm/unsubscribe/{topic}', 'FcmController@unsubscribe')->name('user.fcm.unsubscribe');
             Route::put('update', 'AuthController@update')->name('user.update');
             Route::post('deactivate', 'AuthController@deactivate')->name('user.destroy');
             Route::get('notifications', 'NotificationController@index')->name('user.notifications');
             Route::get('engagement', 'EngagementScoreController')->name('user.engagement');
             Route::get('recommendations', 'RecommendationsController')->name('user.recommendations');
             Route::get('feed', 'FeedController')->name('user.feed');
+            // TODO: Create approve/decline request routes
+            Route::prefix('follower')->group(function () {
+                Route::get('requests', 'FollowingRequestController@requests')->name('user.follower.requests');
+                Route::post('approve/{id}', 'FollowingRequestController@approve')->name('user.follower.approve');
+                Route::post('decline/{id}', 'FollowingRequestController@decline')->name('user.follower.decline');
+            });
         });
 
         // resource routes
@@ -45,7 +51,6 @@ Route::prefix('v1')->group(function () {
         Route::post('profile/{id}/block', 'BlockController@block')->name('profile.block');
         Route::post('profile/{id}/unblock', 'BlockController@unblock')->name('profile.unblock');
         Route::post('profile/{id}/follow', 'FollowController@follow')->name('profile.follow');
-        // TODO: Create approve/decline request routes
         Route::post('profile/{id}/unfollow', 'FollowController@unfollow')->name('profile.unfollow');
         Route::post('profile/{id}/report', 'ReportController@store')->name('profile.report');
         Route::apiResource('notification', 'NotificationController')->only(['index', 'show']);
