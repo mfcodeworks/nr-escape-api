@@ -33,8 +33,7 @@ class RecommendationsController extends Controller
                 'following.user as user',
                 DB::Raw('count(*) as mutuals'),
                 DB::Raw('(SELECT count(id) FROM posts WHERE posts.author = following.user AND posts.created_at > DATE_SUB(now(), INTERVAL '.env('RECOMMENDED_ACTIVITY_PERIOD', '1 YEAR').')) as activity'),
-            )
-            ->whereNotIn('following.user', auth()->user()->followers->pluck('user'))
+            )->whereNotIn('following.user', auth()->user()->followers->pluck('user'))
             ->whereIn('following.following_user', auth()->user()->following->pluck('following_user'))
             ->where('following.user', '!=', auth()->user()->id)
             ->groupBy('following.user')

@@ -16,8 +16,8 @@ class FollowingRequestController extends Controller
      */
     public function approve(Request $request, $id)
     {
-        $followingRequest = FollowingRequest::where('user', '=', $id)
-            ->where('following_user', '=', auth()->user()->id)
+        $followingRequest = FollowingRequest::where('following_user', '=', $id)
+            ->where('user', '=', auth()->user()->id)
             ->first();
 
         return response()->json(
@@ -34,8 +34,8 @@ class FollowingRequestController extends Controller
      */
     public function decline(Request $request, $id)
     {
-        $followingRequest = FollowingRequest::where('user', '=', $id)
-            ->where('following_user', '=', auth()->user()->id)
+        $followingRequest = FollowingRequest::where('following_user', '=', $id)
+            ->where('user', '=', auth()->user()->id)
             ->first();
 
         return response()->json(

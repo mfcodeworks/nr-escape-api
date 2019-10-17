@@ -114,9 +114,9 @@ class User extends Authenticatable
         return $this->hasMany('App\Following', 'user');
     }
 
-    // Return this users following
+    // Return this users following requests
     public function followingRequest() {
-        return $this->hasMany('App\FollowingRequest', 'user');
+        return $this->hasMany('App\FollowingRequest', 'following_user');
     }
 
     // Return this users followers
