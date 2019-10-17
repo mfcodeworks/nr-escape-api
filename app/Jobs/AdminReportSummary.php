@@ -63,10 +63,10 @@ class AdminReportSummary implements ShouldQueue
     {
         // Get profile reports
         $profiles = DB::table('profile_reports')
-            ->select(
+            ->select([
                 'reported_user as profile',
                 DB::Raw('count(*) as reports'),
-            )
+            ])
             ->where('checked', 0)
             ->groupBy('reported_user')
             ->orderBy('reports', 'desc')
@@ -75,11 +75,11 @@ class AdminReportSummary implements ShouldQueue
 
         // Get post reports
         $posts = DB::table('post_reports')
-            ->select(
+            ->select([
                 'post_reports.reported_post as post',
                 DB::Raw('count(*) as reports'),
                 DB::Raw('(SELECT posts.updated_at FROM posts WHERE posts.id = post_reports.reported_post) as post_date')
-            )
+            ])
             ->where('checked', 0)
             ->orWhere(
                 DB::Raw('(SELECT posts.updated_at FROM posts WHERE posts.id = post_reports.reported_post)'),

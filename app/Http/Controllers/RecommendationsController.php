@@ -29,11 +29,11 @@ class RecommendationsController extends Controller
     public function __invoke(Request $request) {
         // Get a list of user ids
         $list = DB::table('following')
-            ->select(
+            ->select([
                 'following.user as user',
                 DB::Raw('count(*) as mutuals'),
                 DB::Raw('(SELECT count(id) FROM posts WHERE posts.author = following.user AND posts.created_at > DATE_SUB(now(), INTERVAL '.env('RECOMMENDED_ACTIVITY_PERIOD', '1 YEAR').')) as activity'),
-            )->whereNotIn('following.user', auth()->user()->followers->pluck('user'))
+            ])->whereNotIn('following.user', auth()->user()->followers->pluck('user'))
             ->whereIn('following.following_user', auth()->user()->following->pluck('following_user'))
             ->where('following.user', '!=', auth()->user()->id)
             ->groupBy('following.user')
@@ -47,10 +47,10 @@ class RecommendationsController extends Controller
         // Get a list of user ids without any mutuals
         if (!$list->first()) {
             $list = DB::table('users')
-                ->select(
+                ->select([
                     'id as user',
                     DB::Raw('(SELECT count(id) FROM posts WHERE posts.author = users.id AND posts.created_at > DATE_SUB(now(), INTERVAL '.env('RECOMMENDED_ACTIVITY_PERIOD', '1 YEAR').')) as activity'),
-                )
+                ])
                 ->groupBy('user')
                 ->havingRaw('activity > ?', [env('USER_RECOMMENDED_ACTIVITY', 10)])
                 ->orderBy('activity', 'desc')
