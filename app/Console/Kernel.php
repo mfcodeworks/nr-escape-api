@@ -31,9 +31,6 @@ class Kernel extends ConsoleKernel
 
         $schedule->job(new AdminReportSummary)
             ->everyMinute();
-
-        $schedule->command('telescope:prune')
-            ->weekly();
     }
 
     /**
