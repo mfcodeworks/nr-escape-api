@@ -10,11 +10,21 @@ class FeedController extends Controller
     /**
      * Fetch user feed
      *
+     * - Find posts where author is in following + the users posts
+     * - Sort by latest
+     * - Limit to 30 per request
+     * - Add count for reposts
+     *
      * @param Request $request
      * @return \Illuminate\Http\Response
      */
     public function __invoke(Request $request) {
-        $feed = Post::whereIn('author', auth()->user()->following->pluck('following_user'))
+        $feed = Post::whereIn(
+                'author',
+                array_merge(
+                    auth()->user()->following->pluck('following_user'),
+                    [auth()->user->id]
+                ))
             ->latest()
             ->limit(30)
             ->without('reposts')
