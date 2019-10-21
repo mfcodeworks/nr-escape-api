@@ -22,7 +22,7 @@ class FeedController extends Controller
         $feed = Post::whereIn(
                 'author',
                 array_merge(
-                    auth()->user()->following->pluck('following_user'),
+                    auth()->user()->following->pluck('following_user')->toArray(),
                     [auth()->user()->id]
                 ))
             ->latest()
