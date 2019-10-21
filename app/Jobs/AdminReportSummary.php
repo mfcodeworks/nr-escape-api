@@ -97,8 +97,7 @@ class AdminReportSummary implements ShouldQueue
             'posts' => $posts,
             'profiles' => $profiles
         ], function($message) {
-            $message
-                ->from('it@nygmarosebeauty.com')
+            $message->from('mua@nygmarosebeauty.com', 'NR Escape')
                 ->to('it@nygmarosebeauty.com', 'NR IT')
                 ->subject('[Reports] NR Escape Reposts Summary');
         });

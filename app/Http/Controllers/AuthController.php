@@ -43,8 +43,7 @@ class AuthController extends Controller
         // Email out welcome email
         $beautymail = app()->make('Snowfire\Beautymail\Beautymail');
         $beautymail->send('emails.welcome', [], function($message) use ($user) {
-            $message
-                ->from('it@nygmarosebeauty.com')
+            $message->from('mua@nygmarosebeauty.com', 'NR Escape')
                 ->to($user->email, $user->username)
                 ->subject('Welcome to Escape');
         });

@@ -61,7 +61,7 @@ class CheckSigninDevice implements ShouldQueue
             $user = User::findOrFail($agent['user_id']);
             $beautymail = app()->make('Snowfire\Beautymail\Beautymail');
             $beautymail->send('emails.unknown-device', ['agent' => $agent], function($message) use ($user) {
-                $message->from('mua@nygmarosebeauty.com')
+                $message->from('mua@nygmarosebeauty.com', 'NR Escape')
                     ->to($user->email, $user->username)
                     ->subject('Escape unknown device login');
             });
