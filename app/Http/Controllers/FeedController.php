@@ -23,7 +23,7 @@ class FeedController extends Controller
                 'author',
                 array_merge(
                     auth()->user()->following->pluck('following_user'),
-                    [auth()->user->id]
+                    [auth()->user()->id]
                 ))
             ->latest()
             ->limit(30)
