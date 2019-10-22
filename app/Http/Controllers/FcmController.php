@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Kreait\Firebase;
 use Kreait\Firebase\Messaging\CloudMessage;
 use App\User;
@@ -32,18 +33,17 @@ class FcmController extends Controller
 
         // If group token add, otherwise create
         $key = ($groupToken)
-        ? FCMGroup::addToGroup($groupName, $groupToken, [$token])
-        : FCMGroup::createGroup($groupName, [$token]);
+            ? FCMGroup::addToGroup($groupName, $groupToken, [$token])
+            : FCMGroup::createGroup($groupName, [$token]);
+
+        Log::alert("User {$user->username} saved {$token} to FCM group {$key}");
 
         // Update group token
-        $save = $user->fill([
+        $user->fill([
             'fcm_token' => $key
         ])->save();
 
-        if ($save) return response()->json('success', 204);
-        else return response()->json([
-            'error' => $key
-        ], 500);
+        return response()->json('success', 204);
     }
 
     /**

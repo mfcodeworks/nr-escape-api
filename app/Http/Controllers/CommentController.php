@@ -3,23 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Comment;
+use App\Post;
 use App\Events\NewComment;
 use Illuminate\Http\Request;
 use Validator;
 
 class CommentController extends Controller
 {
-    /**
-     * Instantiate a new UserController instance.
-     */
-   public function __construct()
-   {
-       // Check if blocked
-       $this->middleware('blocked', [
-           'only' => 'show'
-       ]);
-   }
-
     /**
      * Store a newly created resource in storage.
      *
@@ -48,25 +38,27 @@ class CommentController extends Controller
             ]);
         }
 
-        // If media is present, handle the media (validate URL or upload image/video)
-        if ($request->media) {
-            $request->media = $this->handleMedia($request->media);
-            if (!$request->media) {
-                return response()->json([
-                    'error' => 'It looks like the media for this post isn\'t anything we recognize'
-                ], 400);
+        if (auth()->user()->can('create', Post::findOrFail($request->reply_to))) {
+            // If media is present, handle the media (validate URL or upload image/video)
+            if ($request->media) {
+                $request->media = $this->handleMedia($request->media);
+                if (!$request->media) {
+                    return response()->json([
+                        'error' => 'It looks like the media for this post isn\'t anything we recognize'
+                    ], 400);
+                }
             }
+
+            // Create new comment
+            $comment = Comment::create($request->all());
+
+            // Send new comment event
+            event(new NewComment($comment));
+
+            return response()->json(
+                Comment::find($comment->id)
+            );
         }
-
-        // Create new comment
-        $comment = Comment::create($request->all());
-
-        // Send new comment event
-        event(new NewComment($comment));
-
-        return response()->json(
-            Comment::find($comment->id)
-        );
     }
 
     /**
@@ -76,8 +68,11 @@ class CommentController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show($id) {
-        // Select comment by ID
-        return response()->json(Comment::findOrFail($id));
+        $comment = Comment::findOrFail($id);
+
+        if (auth()->user()->can('view', $comment)) {
+            return response()->json($comment);
+        }
     }
 
     /**
@@ -89,15 +84,12 @@ class CommentController extends Controller
      */
     public function update(Request $request, $id) {
         // Update comment by ID
-        $comment = auth()->user()->comments()->find($id);
+        $comment = auth()->user()->comments()->findOrFail($id);
 
-        // If no comment, comment doesn't exist or isn't owned by user
-        if (!$comment) {
-            return $this->unauthorized();
+        if (auth()->user()->can('update', $comment)) {
+            $comment->fill($request->all())->save();
+            return response()->json($comment->refresh());
         }
-
-        $comment->fill($request->all())->save();
-        return response()->json(Comment::findOrFail($id));
     }
 
     /**
@@ -108,15 +100,12 @@ class CommentController extends Controller
      */
     public function destroy($id) {
         // Delete comment by ID
-        $comment = auth()->user()->comments()->find($id);
+        $comment = auth()->user()->comments()->findOrFail($id);
 
-        // If no comment, comment doesn't exist or isn't owned by user
-        if (!$comment) {
-            return $this->unauthorized();
+        if (auth()->user()->can('delete', $comment)) {
+            $comment->delete();
+            return response()->json('success', 204);
         }
-
-        $comment->delete();
-        return response()->json('success', 204);
     }
 
     /**

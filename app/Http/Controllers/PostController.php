@@ -12,16 +12,6 @@ use Storage;
 class PostController extends Controller
 {
     /**
-     * Instantiate a new UserController instance.
-     */
-   public function __construct() {
-       // Check if blocked
-       $this->middleware('blocked', [
-           'only' => 'show'
-       ]);
-   }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param \Illuminate\Http\Request  $request
@@ -52,29 +42,37 @@ class PostController extends Controller
             ]);
         }
 
-        $postData = $request->all();
-
-        // If media is present, handle the media (either URL or image/video)
-        if ($request->hasFile('media')) {
-            $user = auth()->user()->id;
-            $path = Storage::disk('spaces')->put("SocialHub/author/{$user}/posts", $request->media, 'public');
-            $postData['media'] = Storage::disk('spaces')->url($path);
-        } else if ($request->media) {
-            $postData['media'] = $this->handleMedia($request->media);
-            if (!$postData['media']) {
+        if (auth()->user()->can('create', Post::class)) {
+            if ($request->repost && !auth()->user()->can('repost', Post::findOrFail($request->repost_of))) {
                 return response()->json([
-                    'error' => 'It looks like the media for this post isn\'t anything we recognize'
-                ], 400);
+                    'error' => 'Cannot repost this post'
+                ], 403);
             }
+
+            $postData = $request->all();
+
+            // If media is present, handle the media (either URL or image/video)
+            if ($request->hasFile('media')) {
+                $user = auth()->user()->id;
+                $path = Storage::disk('spaces')->put("SocialHub/author/{$user}/posts", $request->media, 'public');
+                $postData['media'] = Storage::disk('spaces')->url($path);
+            } else if ($request->media) {
+                $postData['media'] = $this->handleMedia($request->media);
+                if (!$postData['media']) {
+                    return response()->json([
+                        'error' => 'It looks like the media for this post isn\'t anything we recognize'
+                    ], 400);
+                }
+            }
+
+            // Create new post
+            $post = Post::create($postData);
+
+            // Dispatch event, either new post or repost
+            $post->repost ? event(new NewPostRepost($post)) : event(new NewPost($post));
+
+            return response()->json($post);
         }
-
-        // Create new post
-        $post = Post::create($postData);
-
-        // Dispatch event, either new post or repost
-        $post->repost ? event(new NewPostRepost($post)) : event(new NewPost($post));
-
-        return response()->json($post);
     }
 
     /**
@@ -84,8 +82,15 @@ class PostController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show($id) {
-        // Select post by ID
-        return response()->json(Post::findOrFail($id));
+        $post = Post::findOrFail($id);
+
+        if (!auth()->user()->can('view_likes', $post)) {
+            $post = $post->without('likes');
+        }
+
+        if (auth()->user()->can('view', $post)) {
+            return response()->json($post);
+        }
     }
 
     /**
@@ -97,15 +102,12 @@ class PostController extends Controller
      */
     public function update(Request $request, $id) {
         // Update post by ID
-        $post = auth()->user()->posts()->find($id);
+        $post = auth()->user()->posts()->findOrFail($id);
 
-        // If no post, post doesn't exist or isn't owned by user
-        if (!$post) {
-            return $this->unauthorized();
+        if (auth()->user()->can('update', $post)) {
+            $post->fill($request->all())->save();
+            return response()->json($post->refresh());
         }
-
-        $post->fill($request->all())->save();
-        return response()->json($post::findOrFail($id));
     }
 
     /**
@@ -116,13 +118,11 @@ class PostController extends Controller
      */
     public function destroy($id) {
         // TODO: On delete check removed comments and notifications
-        
-        // Get post from posts by user
-        $post = auth()->user()->posts()->find($id);
 
-        // If no post, post doesn't exist or isn't owned by user
-        if (!$post) return $this->unauthorized();
-        else {
+        // Get post from posts by user
+        $post = auth()->user()->posts()->findOrFail($id);
+
+        if (auth()->user()->can('delete', $post)) {
             $post->delete();
             return response()->json('success', 204);
         }

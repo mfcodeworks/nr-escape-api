@@ -31,17 +31,19 @@ class PostPolicy
      */
     public function view(User $user, Post $post)
     {
+        $author = User::findOrFail($post->author);
+        
         // Check if user has blocked the profile or profile has blocked the user
-        if (!$user->blockingUser($post->author->id)) {
+        if (!$user->blockingUser($author->id)) {
             switch (true) {
                 // Check if user is the author
-                case $user->id === $post->author->id:
+                case $user->id === $author->id:
 
                 // Check if post is public
-                case !$post->author->settings['private_account']:
+                case !$author->settings['private_account']:
 
                 // Check if post is private but user is following author
-                case $user->following->where('following_user', $post->author->id)->first():
+                case $user->following->where('following_user', $author->id)->first():
 
                     // Return action allowed
                     return true;
@@ -61,14 +63,16 @@ class PostPolicy
      */
     public function view_likes(User $user, Post $post)
     {
+        $author = User::findOrFail($post->author);
+
         // Check if user has blocked the profile or profile has blocked the user
-        if (!$user->blockingUser($post->author->id)) {
+        if (!$user->blockingUser($author->id)) {
             switch (true) {
                 // Check if user is the author
-                case $user->id === $post->author->id:
+                case $user->id === $author->id:
 
                 // Check if post likes are public
-                case !$post->author->settings['display_likes']:
+                case !$author->settings['display_likes']:
 
                     // Return action allowed
                     return true;
@@ -88,8 +92,10 @@ class PostPolicy
      */
     public function repost(User $user, Post $post)
     {
+        $author = User::findOrFail($post->author);
+
         // Check if user has blocked the profile or profile has blocked the user, and post public status
-        return !$user->blockingUser($post->author->id) && !$post->author->settings['private_account'];
+        return !$user->blockingUser($author->id) && !$author->settings['private_account'];
     }
 
     /**
@@ -114,7 +120,7 @@ class PostPolicy
     public function update(User $user, Post $post)
     {
         // Return allowed if user is author
-        return $user->id === $post->author->id;
+        return $user->id === $post->author;
     }
 
     /**
@@ -127,6 +133,6 @@ class PostPolicy
     public function delete(User $user, Post $post)
     {
         // Return allowed if user is author
-        return $user->id === $post->author->id;
+        return $user->id === $post->author;
     }
 }

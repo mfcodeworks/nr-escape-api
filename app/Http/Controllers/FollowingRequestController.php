@@ -16,13 +16,15 @@ class FollowingRequestController extends Controller
      */
     public function approve(Request $request, $id)
     {
-        $followingRequest = FollowingRequest::where('following_user', '=', $id)
-            ->where('user', '=', auth()->user()->id)
-            ->first();
+        if (auth()->user()->can('update', auth()->user())) {
+            $followingRequest = FollowingRequest::where('user', $id)
+                ->where('following_user', auth()->user()->id)
+                ->first();
 
-        return response()->json(
-            $followingRequest->approve()
-        );
+            return response()->json(
+                $followingRequest->approve()
+            );
+        }
     }
 
     /**
@@ -34,13 +36,15 @@ class FollowingRequestController extends Controller
      */
     public function decline(Request $request, $id)
     {
-        $followingRequest = FollowingRequest::where('following_user', '=', $id)
-            ->where('user', '=', auth()->user()->id)
-            ->first();
+        if (auth()->user()->can('update', auth()->user())) {
+            $followingRequest = FollowingRequest::where('user', $id)
+                ->where('following_user', auth()->user()->id)
+                ->first();
 
-        return response()->json(
-            $followingRequest->decline()
-        );
+            return response()->json(
+                $followingRequest->decline()
+            );
+        }
     }
 
     /**
@@ -49,8 +53,10 @@ class FollowingRequestController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function requests() {
-        return response()->json(
-            auth()->user()->followingRequest
-        );
+        if (auth()->user()->can('update', auth()->user())) {
+            return response()->json(
+                auth()->user()->followingRequest
+            );
+        }
     }
 }

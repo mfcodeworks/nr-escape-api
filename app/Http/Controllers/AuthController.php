@@ -34,11 +34,13 @@ class AuthController extends Controller
         }
 
         // Create new user with details
-        $user = User::create([
-            'username' => $request->username,
-            'email' => $request->email,
-            'password' => Hash::make($request->password)
-        ]);
+        if($user->can('create', User::class)) {
+            $user = User::create([
+                'username' => $request->username,
+                'email' => $request->email,
+                'password' => Hash::make($request->password)
+            ]);
+        }
 
         // Email out welcome email
         $beautymail = app()->make('Snowfire\Beautymail\Beautymail');
@@ -48,15 +50,12 @@ class AuthController extends Controller
                 ->subject('Welcome to Escape');
         });
 
-        // Get passport token
-        $token = $user->createToken(env('APP_NAME', 'Escape'))->accessToken;
-
         // Signup success response
         return response()->json([
-            'token' => $token,
+            'token' => $user->createToken(env('APP_NAME', 'Escape'))->accessToken,
             'email' => $user->email,
             'settings' => $user->settings,
-            'profile' => $user
+            'profile' => $user->makeVisible(['fcm_token', 'email'])
         ], 201);
     }
 
@@ -80,31 +79,29 @@ class AuthController extends Controller
             $user->deactivated = 0;
             $user->save();
 
-            // Create JWT for access
-            $token = auth()->user()->createToken(env('APP_NAME', 'Escape'))->accessToken;
-
             // Dispatch login event
-            $agent = new Agent();
-            event(new UserSignin([
-                'ip' => $request->ip(),
-                'device' => $agent->device(),
-                'platform' => $agent->platform(),
-                'browser' => $agent->browser(),
-                'robot' => $agent->isRobot(),
-                'user_id' => auth()->user()->id
-            ]));
+            if ($user->settings['unknown_devices']) {
+                $agent = new Agent();
+                event(new UserSignin([
+                    'ip' => $request->ip(),
+                    'device' => $agent->device(),
+                    'platform' => $agent->platform(),
+                    'browser' => $agent->browser(),
+                    'robot' => $agent->isRobot(),
+                    'user_id' => auth()->user()->id
+                ]));
+            }
 
             // Return successful response
             return response()->json([
-                'token' => $token,
+                'token' => auth()->user()->createToken(env('APP_NAME', 'Escape'))->accessToken,
                 'email' => auth()->user()->email,
                 'settings' => auth()->user()->settings,
-                'profile' => auth()->user()
+                'profile' => auth()->user()->makeVisible(['fcm_token', 'email'])
             ], 201);
-
-        // If auth fails respond with error
         }
 
+        // If auth fails respond with error
         return response()->json(['error' => 'Incorrect username or password'], 401);
     }
 
@@ -115,11 +112,12 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function user(Request $request) {
-        // Get authenticated user
-        $user = auth()->user();
-
         // Return user with hidden data
-        return response()->json($user->makeVisible(['fcm_token', 'settings', 'email']));
+        if (auth()->user()->can('view', auth()->user())) {
+            return response()->json(
+                auth()->user()->makeVisible(['fcm_token', 'email'])
+            );
+        }
     }
 
     /**
@@ -132,18 +130,18 @@ class AuthController extends Controller
         // Instantiate user data
         $data = $request->all();
 
-        // If updating password, hash new password
-        if ($request->password) {
-            $data['password'] = Hash::make($request->password);
+        if (auth()->user()->can('update', auth()->user())) {
+            // If updating password, hash new password
+            if ($request->password) {
+                $data['password'] = Hash::make($request->password);
+            }
+
+            // TODO: If profile pic then handle
+
+            // Save and return authorised user account
+            auth()->user()->fill($data)->save();
+            return $this->user($request);
         }
-
-        // TODO: If profile pic then handle
-
-        // Get authorised user account
-        $user = auth()->user()->fill($data)->save();
-        return response()->json(
-            auth()->user()->makeVisible(['fcm_token', 'settings', 'email'])
-        );
     }
 
     /**
@@ -153,19 +151,16 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function deactivate(Request $request) {
-        // Get authenticated user
-        $user = auth()->user();
-
         // Set deactivated status
-        $user->deactivated = 1;
-
-        // Save updated object
-        if ($user->save()) {
+        if ($user->can('deactivate', auth()->user())) {
+            auth()->user()->fill([
+                'deactivated' => 1
+            ])->save();
             return response()->json('success', 204);
-        } else {
-            return response()->json([
-                'error' => 'Couldn\'t update user account'
-            ], 500);
         }
+
+        return response()->json([
+            'error' => 'Couldn\'t deactivate user account'
+        ], 500);
     }
 }

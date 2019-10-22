@@ -17,7 +17,6 @@ class SearchController extends Controller
 
         // If the request type is hashtag, find the posts containing this hashtag
         if (isset($request->type) && $request->type == 'hashtag') {
-
             /**
              * Find posts
              * - within the past 24 hours
@@ -121,6 +120,13 @@ class SearchController extends Controller
         $users = User::where('username', 'like', $query['user'])
             ->limit(15)
             ->get();
+
+        // Remove users that are blocked from viewing
+        for ($i = 0; $i < count($users); $i++) {
+            if (!auth()->user()->can('view', $users[$i])) {
+                unset($users[$i]);
+            }
+        }
 
         // Return match array
         return response()->json([

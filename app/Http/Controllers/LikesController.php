@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Like;
+use App\Post;
 use App\Events\NewPostLike;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -31,14 +32,16 @@ class LikesController extends Controller
         }
 
         // Create post like
-        $like = Like::create([
-            'post' => $id,
-            'user' => auth()->user()->id
-        ]);
+        if (auth()->user()->can('view', Post::findOrFail($id))) {
+            $like = Like::create([
+                'post' => $id,
+                'user' => auth()->user()->id
+            ]);
 
-        event(new NewPostLike($like));
+            event(new NewPostLike($like));
 
-        return response()->json($like);
+            return response()->json($like);
+        }
     }
 
     /**
@@ -56,11 +59,13 @@ class LikesController extends Controller
             ->first();
 
         // If no like, like doesn't exist or isn't owned by user
-        if (!$like) {
-            return $this->unauthorized();
-        } else {
-            $like->delete();
-            return response()->json('success', 204);
+        if (auth()->user()->can('view', Post::findOrFail($id))) {
+            if (!$like) {
+                return $this->unauthorized();
+            } else {
+                $like->delete();
+                return response()->json('success', 204);
+            }
         }
     }
 

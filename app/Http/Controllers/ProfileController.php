@@ -9,25 +9,28 @@ use Illuminate\Http\Request;
 class ProfileController extends Controller
 {
     /**
-     * Instantiate a new UserController instance.
-     */
-   public function __construct()
-   {
-       // Check if blocked
-       $this->middleware('blocked', [
-           'only' => 'show'
-       ]);
-   }
-
-    /**
      * Display the specified resource.
      *
      * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id) {
-        // Select user by ID
-        return response()->json(User::findOrFail($id));
+        $user = User::findOrFail($id);
+
+        if (auth()->user()->can('view', $user)) {
+            return response()->json($user);
+        } else if (auth()->user()->can('view_restricted', $user)) {
+            return response()->json(
+                $user->without(
+                    'contact_info',
+                    'following',
+                    'followers',
+                    'posts_count',
+                    'followers_count',
+                    'following_count'
+                )
+            );
+        }
     }
 
     /**
@@ -37,8 +40,22 @@ class ProfileController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function showUsername($username) {
-        // Select user by ID
-        return response()->json(User::where('username', '=', $username)->first());
+        $user = User::where('username', '=', $username)->first();
+
+        if (auth()->user()->can('view', $user)) {
+            return response()->json($user);
+        } else if (auth()->user()->can('view_restricted', $user)) {
+            return response()->json(
+                $user->without(
+                    'contact_info',
+                    'following',
+                    'followers',
+                    'posts_count',
+                    'followers_count',
+                    'following_count'
+                )
+            );
+        }
     }
 
     /**
@@ -49,15 +66,18 @@ class ProfileController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function posts(Request $request, $id) {
-        $posts = Post::where('author', '=', $id)
+        $user = User::findOrFail($id);
+        $posts = Post::where('author', $id)
             ->latest()
             ->limit(15);
 
-        if ($request->offset) {
-            $posts = $posts->where('id', '<', $request->offset);
-        }
+        if (auth()->user()->can('view', $user)) {
+            if ($request->offset) {
+                $posts = $posts->where('id', '<', $request->offset);
+            }
 
-        // Select posts by user ID
-        return response()->json($posts->get());
+            // Select posts by user ID
+            return response()->json($posts->get());
+        }
     }
 }

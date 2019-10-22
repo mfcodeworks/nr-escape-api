@@ -19,11 +19,7 @@ class BlockController extends Controller
     public function block(Request $request, $id)
     {
         // Check for existing block
-        if (auth()->user()
-            ->blocks
-            ->where('blocked_user', $id)
-            ->first()
-        ) {
+        if (auth()->user()->blockingUser($id)) {
             return response()->json([
                 'error' => 'User already blocked'
             ], 400);
@@ -66,10 +62,10 @@ class BlockController extends Controller
         // If no block, block doesn't exist or isn't owned by user
         if (!$block) {
             return $this->unauthorized();
-        } else {
-            $block->delete();
-            return response()->json('success', 204);
         }
+        
+        $block->delete();
+        return response()->json('success', 204);
     }
 
     // Respond with unauthorized

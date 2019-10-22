@@ -115,4 +115,31 @@ class UserPolicy
         // Return allowed if user is profile
         return $user->id === $model->id;
     }
+
+    /**
+     * Determine whether the user can follow the model.
+     *
+     * @param  \App\User  $user
+     * @param  \App\User  $model
+     * @return mixed
+     */
+    public function follow(User $user, User $model)
+    {
+        switch (true) {
+            // Check if already following
+            case auth()->user()->following->where('following_user', $model->id)->first():
+
+            // Check if follow is already requested
+            case auth()->user()->followingRequest->where('following_user', $model->id)->first():
+
+            // Check if user has blocked the profile or profile has blocked the user
+            case $user->blockingUser($model->id):
+
+                // Return action forbidden
+                return false;
+        }
+
+        // Return allowed by default
+        return true;
+    }
 }

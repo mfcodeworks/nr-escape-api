@@ -32,10 +32,10 @@ class CommentPolicy
     public function view(User $user, Comment $comment)
     {
         // Check if user has blocked the comment author or vice versa
-        if (!$user->blockingUser($comment->author->id)) {
+        if (!$user->blockingUser($comment->author)) {
             switch (true) {
                 // Check if user
-                case $user->id === $comment->author->id:
+                case $user->id === $comment->author:
 
                 // Check if blocked from post
                 case $user->can('view', $comment->post):
@@ -71,7 +71,7 @@ class CommentPolicy
     public function update(User $user, Comment $comment)
     {
         // Return allowed if user is author
-        return $user->id === $comment->author->id;
+        return $user->id === $comment->author;
     }
 
     /**
@@ -85,7 +85,7 @@ class CommentPolicy
     {
         switch (true) {
             // Check if user is the comment author
-            case $user->id === $comment->author->id:
+            case $user->id === $comment->author:
 
             // Check if user is the post owner
             case $user->can('delete', $comment->post):

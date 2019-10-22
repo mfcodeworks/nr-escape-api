@@ -148,10 +148,10 @@ class User extends Authenticatable
     }
 
     // Check if either user has blocked the other
-    public function blockingUser($id) {
-        return (
-            $user->blocks->where('blocked_user', $id)->first() ||
-            $user->blockedBy->where('user', $id)->first()
+    public function blockingUser($id): bool {
+        return !!(
+            $this->blocks->where('blocked_user', $id)->first() ||
+            $this->blockedBy->where('user', $id)->first()
         );
     }
 }

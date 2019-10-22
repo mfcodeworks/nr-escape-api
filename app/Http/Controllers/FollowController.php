@@ -20,6 +20,28 @@ class FollowController extends Controller
      */
     public function follow(Request $request, $id)
     {
+        $user = User::findOrFail($id);
+
+        if (auth()->user()->can('follow', $user)) {
+            // Create profile follow or request depending on users privacy setting
+            $follow = $user->settings['private_account']
+                ? FollowingRequest::create([
+                    'following_user' => $id,
+                    'user' => auth()->user()->id
+                ]) : Following::create([
+                    'following_user' => $id,
+                    'user' => auth()->user()->id
+                ]);
+
+            event(new NewFollower($follow));
+
+            return response()->json(
+                $follow instanceof FollowingRequest
+                    ? ['status' => 'requested']
+                    : $follow
+            );
+        }
+
         // Check if user already following
         if (auth()->user()
             ->following
@@ -42,32 +64,11 @@ class FollowController extends Controller
             ], 403);
 
         // Check if user has blocked, or been blocked, by profile
-        } else if (
-            auth()->user()->blocks->where('blocked_user', $id)->first() ||
-            User::findOrFail($id)->blocks->where('blocked_user', auth()->user()->id)->first()
-        ) {
+        } else if (auth()->user()->blockingUser($id)) {
             return response()->json([
                 'error' => 'Profile has been blocked, or blocked you'
             ], 403);
         }
-
-        // Create profile follow or request depending on users privacy setting
-        $follow = User::findOrFail($id)->settings['private_account']
-        ? FollowingRequest::create([
-            'following_user' => $id,
-            'user' => auth()->user()->id
-        ]) : Following::create([
-            'following_user' => $id,
-            'user' => auth()->user()->id
-        ]);
-
-        event(new NewFollower($follow));
-
-        return response()->json(
-            $follow instanceof FollowingRequest
-                ? ['status' => 'requested']
-                : $follow
-        );
     }
 
     /**
@@ -78,16 +79,18 @@ class FollowController extends Controller
      */
     public function unfollow($id)
     {
-        // Validate follow info and get follow
-        $follow = auth()->user()
-            ->following
-            ->where('following_user', $id)
-            ->first();
+        if (auth()->user()->can('update', auth()->user())) {
+            // Validate follow info and get follow
+            $follow = auth()->user()
+                ->following
+                ->where('following_user', $id)
+                ->first();
 
-        // If no follow, follow doesn't exist
-        if (!$follow) {
-            return $this->unauthorized();
-        } else {
+            // If no follow, follow doesn't exist
+            if (!$follow) {
+                return $this->unauthorized();
+            }
+            
             $follow->delete();
             return response()->json('success', 204);
         }

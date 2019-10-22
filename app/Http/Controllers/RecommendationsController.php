@@ -56,7 +56,6 @@ class RecommendationsController extends Controller
                 ->orderBy('activity', 'desc')
                 ->limit(30)
                 ->get();
-
         }
 
         // Transform userID to user object
@@ -70,12 +69,15 @@ class RecommendationsController extends Controller
             $this->recommendations->whereNotIn('id', json_decode($request->notIn));
         }
 
-        /*
-        $this->recommendations = User::with('posts')
-            ->findOrFail($list->pluck('user')->toArray())
-            ->pluck('recentPosts')[0];
-            */
+        $posts = $this->recommendations->get();
 
-        return response()->json($this->recommendations->get());
+        // Remove posts that user is blocked from viewing
+        for ($i = 0; $i < count($posts); $i++) {
+            if (!auth()->user()->can('view', $posts[$i])) {
+                unset($posts[$i]);
+            }
+        }
+
+        return response()->json($posts);
     }
 }
