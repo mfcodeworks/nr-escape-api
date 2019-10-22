@@ -52,6 +52,8 @@ class LikesController extends Controller
      */
     public function destroy($id)
     {
+        // TODO: Delete notification on like delete
+        
         // Validate like info and get like
         $like = auth()->user()
             ->likes
