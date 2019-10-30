@@ -34,7 +34,7 @@ class AuthController extends Controller
         }
 
         // Create new user with details
-        if($user->can('create', User::class)) {
+        if(User::can('create', User::class)) {
             $user = User::create([
                 'username' => $request->username,
                 'email' => $request->email,
