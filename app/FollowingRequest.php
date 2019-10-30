@@ -15,7 +15,7 @@ class FollowingRequest extends Following
      * @var array
      */
     protected $with = [
-        'author',
+        'author', // Parent belongsTo
         'followingUser'
     ];
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\FollowingRequest;
+use App\User;
 use Illuminate\Http\Request;
 
 class FollowingRequestController extends Controller
@@ -58,5 +59,19 @@ class FollowingRequestController extends Controller
                 auth()->user()->followingRequest
             );
         }
+    }
+
+    /**
+     * Return if user has requested to follow profile
+     * 
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function requested(Request $request, $id) {
+        return User::findOrFail($id)
+            ->followingRequest()
+            ->where('user', auth()->user()->id)
+            ->first();
     }
 }

@@ -48,6 +48,7 @@ Route::prefix('v1')->group(function () {
         Route::get('profile/{username}', 'ProfileController@showUsername')->name('profile.show.username');
         Route::apiResource('profile', 'ProfileController')->only(['show']);
         Route::get('profile/{id}/posts', 'ProfileController@posts')->name('profile.posts');
+        Route::get('profile/{id}/requested', 'FollowingRequestController@requested')->name('profile.follow.requested');
         Route::post('profile/{id}/block', 'BlockController@block')->name('profile.block');
         Route::post('profile/{id}/unblock', 'BlockController@unblock')->name('profile.unblock');
         Route::post('profile/{id}/follow', 'FollowController@follow')->name('profile.follow');
