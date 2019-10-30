@@ -40,7 +40,7 @@ class ProfileController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function showUsername($username) {
-        $user = User::where('username', $username)->first();
+        $user = User::where('username', $username)->get()->first();
 
         if (auth()->user()->can('view', $user)) {
             return $user; //response()->json($user);
