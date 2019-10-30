@@ -43,20 +43,20 @@ class ProfileController extends Controller
         $user = User::where('username', $username)->first();
 
         if (auth()->user()->can('view', $user)) {
-            return $user; //response()->json($user);
+            return response()->json($user);
         } else if (auth()->user()->can('view_restricted', $user)) {
-            return //response()->json(
+            return response()->json(
                 $user->only(
                     'username',
                     'bio',
                     'settings',
                     'profile_pic'
-                );
-            //);
+                )
+            );
         } else {
             return response()->json([
                 'error' => 'Not authorized to view account'
-            ], 400);
+            ], 401);
         }
     }
 
