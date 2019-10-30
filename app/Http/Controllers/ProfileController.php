@@ -40,7 +40,7 @@ class ProfileController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function showUsername($username) {
-        $user = User::where('username', '=', $username)->first();
+        $user = User::where('username', $username)->first();
 
         if (auth()->user()->can('view', $user)) {
             return response()->json($user);
@@ -55,6 +55,10 @@ class ProfileController extends Controller
                     'following_count'
                 )
             );
+        } else {
+            return response()->json([
+                'error' => 'Not authorized to view account'
+            ], 400);
         }
     }
 
