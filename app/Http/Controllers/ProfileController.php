@@ -50,7 +50,8 @@ class ProfileController extends Controller
                     'username',
                     'bio',
                     'settings',
-                    'profile_pic'
+                    'profile_pic',
+                    'id'
                 )
             );
         } else {

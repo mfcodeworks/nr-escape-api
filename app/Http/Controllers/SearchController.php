@@ -118,12 +118,19 @@ class SearchController extends Controller
 
         // Find users matching query
         $users = User::where('username', 'like', $query['user'])
+            ->only(
+                'username',
+                'bio',
+                'settings',
+                'profile_pic',
+                'id'
+            )
             ->limit(15)
             ->get();
 
         // Remove users that are blocked from viewing
         for ($i = 0; $i < count($users); $i++) {
-            if (!auth()->user()->can('view', $users[$i])) {
+            if (!auth()->user()->can('view_restricted', $users[$i])) {
                 unset($users[$i]);
             }
         }
