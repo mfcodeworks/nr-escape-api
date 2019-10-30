@@ -69,9 +69,11 @@ class FollowingRequestController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function requested(Request $request, $id) {
-        return !!User::findOrFail($id)
-            ->followingRequest()
-            ->where('user', auth()->user()->id)
-            ->first();
+        return respponse()->json(
+            !!User::findOrFail($id)
+                ->followingRequest()
+                ->where('user', auth()->user()->id)
+                ->first()
+        );
     }
 }
