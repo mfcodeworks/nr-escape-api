@@ -118,13 +118,6 @@ class SearchController extends Controller
 
         // Find users matching query
         $users = User::where('username', 'like', $query['user'])
-            ->only(
-                'username',
-                'bio',
-                'settings',
-                'profile_pic',
-                'id'
-            )
             ->limit(15)
             ->get();
 
@@ -132,6 +125,15 @@ class SearchController extends Controller
         for ($i = 0; $i < count($users); $i++) {
             if (!auth()->user()->can('view_restricted', $users[$i])) {
                 unset($users[$i]);
+            } else {
+                $users[$i] = $users[$i]
+                    ->only(
+                        'username',
+                        'bio',
+                        'settings',
+                        'profile_pic',
+                        'id'
+                    );
             }
         }
 
