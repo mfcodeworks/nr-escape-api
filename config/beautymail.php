@@ -24,7 +24,7 @@ return [
         'address'     => 'Your Escape',
 
         'logo'        => [
-            'path'   => '%PUBLIC%/img/logo.png',
+            'path'   => env('APP_URL').'/img/logo.png',
             'width'  => '130px',
             'height' => 'auto',
         ],

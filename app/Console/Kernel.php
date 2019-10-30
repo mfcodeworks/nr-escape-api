@@ -30,7 +30,7 @@ class Kernel extends ConsoleKernel
             ->everyFiveMinutes();
 
         $schedule->job(new AdminReportSummary)
-            ->everyMinute();
+            ->daily();
     }
 
     /**
