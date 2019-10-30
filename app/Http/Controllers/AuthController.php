@@ -33,14 +33,12 @@ class AuthController extends Controller
             ], 400);
         }
 
-        // Create new user with details
-        if(User::can('create', User::class)) {
-            $user = User::create([
-                'username' => $request->username,
-                'email' => $request->email,
-                'password' => Hash::make($request->password)
-            ]);
-        }
+        // Create new user with details DEBUG: Add guest auth
+        $user = User::create([
+            'username' => $request->username,
+            'email' => $request->email,
+            'password' => Hash::make($request->password)
+        ]);
 
         // Email out welcome email
         $beautymail = app()->make('Snowfire\Beautymail\Beautymail');
