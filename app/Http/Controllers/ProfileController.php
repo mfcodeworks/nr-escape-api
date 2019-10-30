@@ -40,19 +40,17 @@ class ProfileController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function showUsername($username) {
-        $user = User::where('username', $username)->get()->first();
+        $user = User::where('username', $username)->first();
 
         if (auth()->user()->can('view', $user)) {
             return $user; //response()->json($user);
         } else if (auth()->user()->can('view_restricted', $user)) {
             return //response()->json(
-                $user->without(
-                    'contact_info',
-                    'following',
-                    'followers',
-                    'posts_count',
-                    'followers_count',
-                    'following_count'
+                $user->only(
+                    'username',
+                    'bio',
+                    'settings',
+                    'profile_pic'
                 );
             //);
         } else {
