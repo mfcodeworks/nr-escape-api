@@ -71,7 +71,7 @@ class PostController extends Controller
             $post = Post::create($postData);
 
             // Dispatch event, either new post or repost
-            $post->repost ? event(new NewPostRepost($post)) : event(new NewPost($post));
+            $post->repost == true ? event(new NewPostRepost($post)) : event(new NewPost($post));
 
             return response()->json($post);
         }
