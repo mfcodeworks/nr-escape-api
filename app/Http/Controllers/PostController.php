@@ -43,10 +43,12 @@ class PostController extends Controller
         }
 
         if (auth()->user()->can('create', Post::class)) {
-            if ($request->repost && !auth()->user()->can('repost', Post::find($request->repost_of))) {
-                return response()->json([
-                    'error' => 'Cannot repost this post'
-                ], 403);
+            if ($request->repost == true && $request->repost_of) {
+                if (!auth()->user()->can('repost', Post::find($request->repost_of))) {
+                    return response()->json([
+                        'error' => 'Cannot repost this post'
+                    ], 403);
+                }
             }
 
             $postData = $request->all();
