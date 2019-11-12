@@ -125,25 +125,22 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function update(Request $request) {
-        // Instantiate user data
-        $data = $request->all();
-
         if (auth()->user()->can('update', auth()->user())) {
+            // Instantiate user data
+            $data = $request->all();
+
             // If updating password, hash new password
             if ($request->password) {
                 $data['password'] = Hash::make($request->password);
             }
 
             // If profile pic is present as file, handle the file (either URL or image/video)
-            if ($request->hasFile('profilePic')) {
+            if ($request->hasFile('media')) {
                 $user = auth()->user()->id;
-                $path = Storage::disk('spaces')->put("SocialHub/author/{$user}/profile", $request->profilePic, 'public');
+                $path = Storage::disk('spaces')->put("SocialHub/author/{$user}/profile", $request->media, 'public');
                 $data['profilePic'] = Storage::disk('spaces')->url($path);
-
-            // If profile pic isn't file, unset and discard
-            } else if ($request->profilePic) {
-                unset($data['profilePic']);
             }
+            unset($data['media']);
 
             // Save and return authorised user account
             auth()->user()->fill($data)->save();
