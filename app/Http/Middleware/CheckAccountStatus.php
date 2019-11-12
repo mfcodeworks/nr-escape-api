@@ -16,8 +16,12 @@ class CheckAccountStatus
      */
     public function handle($request, Closure $next)
     {
+        // If guest continue
+        if(!auth()->user()) {
+            return $next($request);
+        }
         // Check if user account is deactivated
-        if (auth()->user()->deactivated) {
+        else if (auth()->user()->deactivated) {
             return response()->json([
                 'error' => 'Account has been deactivated, login again to reactivate'
             ], 401);
