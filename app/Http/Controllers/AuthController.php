@@ -134,7 +134,16 @@ class AuthController extends Controller
                 $data['password'] = Hash::make($request->password);
             }
 
-            // TODO: If profile pic then handle
+            // If profile pic is present as file, handle the file (either URL or image/video)
+            if ($request->hasFile('profilePic')) {
+                $user = auth()->user()->id;
+                $path = Storage::disk('spaces')->put("SocialHub/author/{$user}/profile", $request->profilePic, 'public');
+                $data['profilePic'] = Storage::disk('spaces')->url($path);
+
+            // If profile pic isn't file, unset and discard
+            } else if ($request->profilePic) {
+                unset($data['profilePic']);
+            }
 
             // Save and return authorised user account
             auth()->user()->fill($data)->save();
