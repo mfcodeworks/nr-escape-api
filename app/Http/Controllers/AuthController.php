@@ -139,9 +139,10 @@ class AuthController extends Controller
             if ($request->hasFile('media')) {
                 $user = auth()->user()->id;
                 $path = Storage::disk('spaces')->put("SocialHub/author/{$user}/profile", $request->media, 'public');
+                // nullify data and set profile pic only
+                $data = [];
                 $data['profilePic'] = Storage::disk('spaces')->url($path);
             }
-            unset($data['media']);
 
             // Save and return authorised user account
             auth()->user()->fill($data)->save();
