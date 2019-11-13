@@ -79,7 +79,7 @@ class AuthController extends Controller
             $user->save();
 
             // Dispatch login event
-            if ($user->settings['unknown_devices']) {
+            if ($user->settings['unknownDevices']) {
                 $agent = new Agent();
                 event(new UserSignin([
                     'ip' => $request->ip(),

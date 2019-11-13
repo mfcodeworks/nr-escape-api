@@ -24,7 +24,7 @@ class FollowController extends Controller
 
         if (auth()->user()->can('follow', $user)) {
             // Create profile follow or request depending on users privacy setting
-            $follow = $user->settings['private_account']
+            $follow = $user->settings['privateAccount']
                 ? FollowingRequest::create([
                     'following_user' => $id,
                     'user' => auth()->user()->id
@@ -90,7 +90,7 @@ class FollowController extends Controller
             if (!$follow) {
                 return $this->unauthorized();
             }
-            
+
             $follow->delete();
             return response()->json('success', 204);
         }
