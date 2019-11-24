@@ -35,6 +35,11 @@ class PostController extends Controller
             ], 400);
         }
 
+        // Parse repost from string to boolean
+        if ($request->repost === 'true') {
+            $request->repost = true;
+        }
+
         // Check if no caption, media, or repost
         if (!$request->caption && !isset($request->media) && !$request->repost) {
             return response()->json([
