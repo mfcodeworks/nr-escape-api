@@ -23,7 +23,6 @@ class PostController extends Controller
             'author' => 'required|exists:users,id',
             'type' => 'required|string',
             'caption' => 'string|nullable',
-            'repost' => 'required',
             'repost_of' => 'integer|nullable'
         ], [
             'author.exists' => 'Author not found'
