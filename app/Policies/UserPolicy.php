@@ -37,7 +37,7 @@ class UserPolicy
                 case $user->id === $model->id:
 
                 // Check if profile is public
-                case !$model->settings['private_account']:
+                case !$model->settings['privateAccount']:
 
                 // Check if profile is private but user is following profile
                 case $user->following->where('following_user', $model->id)->first():
@@ -65,7 +65,7 @@ class UserPolicy
             case $user->id === $model->id:
 
             // Check if profile is public
-            case !$model->settings['private_account']:
+            case !$model->settings['privateAccount']:
 
             // Check if user has blocked the profile
             case !$user->blockingUser($model->id):

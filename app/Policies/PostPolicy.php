@@ -32,7 +32,7 @@ class PostPolicy
     public function view(User $user, Post $post)
     {
         $author = User::findOrFail($post->author);
-        
+
         // Check if user has blocked the profile or profile has blocked the user
         if (!$user->blockingUser($author->id)) {
             switch (true) {
@@ -40,7 +40,7 @@ class PostPolicy
                 case $user->id === $author->id:
 
                 // Check if post is public
-                case !$author->settings['private_account']:
+                case !$author->settings['privateAccount']:
 
                 // Check if post is private but user is following author
                 case $user->following->where('following_user', $author->id)->first():
@@ -72,7 +72,7 @@ class PostPolicy
                 case $user->id === $author->id:
 
                 // Check if post likes are public
-                case !$author->settings['display_likes']:
+                case !$author->settings['displayLikes']:
 
                     // Return action allowed
                     return true;
@@ -95,7 +95,7 @@ class PostPolicy
         $author = User::findOrFail($post->author);
 
         // Check if user has blocked the profile or profile has blocked the user, and post public status
-        return !$user->blockingUser($author->id) && !$author->settings['private_account'];
+        return !$user->blockingUser($author->id) && !$author->settings['privateAccount'];
     }
 
     /**

@@ -30,7 +30,7 @@ class User extends Authenticatable
     protected $attributes = [
         'profile_pic' => 'https://glamsquad.sgp1.cdn.digitaloceanspaces.com/SocialHub/default/images/profile.svg',
         'deactivated' => 0,
-        'settings' => '{"private_account": false, "unknown_devices": true, "display_likes": true}'
+        'settings' => '{"privateAccount": false, "unknownDevices": true, "displayLikes": true}'
     ];
 
     /**
