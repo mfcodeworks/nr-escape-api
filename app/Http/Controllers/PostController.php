@@ -36,25 +36,24 @@ class PostController extends Controller
         }
 
         // Parse repost from string to boolean
-        $request->repost = (bool) $request->repost === 'true' ? true : false;
+        $postData = $request->all();
+        $postData->repost = (bool) $request->repost === 'true' ? true : false;
 
         // Check if no caption, media, or repost
-        if (!$request->caption && !isset($request->media) && !$request->repost) {
+        if (!$postData->caption && !isset($request->media) && !$postData->repost) {
             return response()->json([
                 'error' => 'Post cannot be empty, we need a little text or something'
             ]);
         }
 
         if (auth()->user()->can('create', Post::class)) {
-            if ($request->repost == true && $request->repost_of) {
-                if (!auth()->user()->can('repost', Post::find($request->repost_of))) {
+            if ($postData->repost == true && $postData->repost_of) {
+                if (!auth()->user()->can('repost', Post::find($postData->repost_of))) {
                     return response()->json([
                         'error' => 'Cannot repost this post'
                     ], 403);
                 }
             }
-
-            $postData = $request->all();
 
             // If media is present, handle the media (either URL or image/video)
             if ($request->hasFile('media')) {
