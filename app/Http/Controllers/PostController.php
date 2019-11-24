@@ -37,7 +37,7 @@ class PostController extends Controller
 
         // Parse repost from string to boolean
         $postData = $request->all();
-        $postData['repost'] = (bool) $request->repost === 'true' ? true : false;
+        $postData['repost'] = (bool) $request->repost_of ? true : false;
 
         // Check if no caption, media, or repost
         if (!$postData['caption'] && !isset($request->media) && !$postData['repost']) {
