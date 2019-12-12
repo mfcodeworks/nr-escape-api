@@ -38,6 +38,8 @@ class ReportController extends Controller
                     ]);
                     event(new ProfileReported($report));
                     return response()->json($report);
+                } else {
+                    return $return;
                 }
                 break;
 
@@ -53,6 +55,8 @@ class ReportController extends Controller
                     ]);
                     event(new PostReported($report));
                     return response()->json($report);
+                } else {
+                    return $return;
                 }
         }
         return response()->json($return);
@@ -70,8 +74,8 @@ class ReportController extends Controller
         switch ($type) {
             case 'post':
                 $reported = auth()->user()
-                    ->profileReports
-                    ->where('reported_user', $id)
+                    ->postReports()
+                    ->where('reported_post', $id)
                     ->whereDate(
                         'created_at',
                         '>',
@@ -82,8 +86,8 @@ class ReportController extends Controller
 
             case 'profile':
                 $reported = auth()->user()
-                    ->postReports
-                    ->where('reported_post', $id)
+                    ->profileReports()
+                    ->where('reported_user', $id)
                     ->whereDate(
                         'created_at',
                         '>',
@@ -95,7 +99,7 @@ class ReportController extends Controller
 
         // If a report was found in the last 24 hours return error, else return false
         return $reported ? response()->json([
-            'error' => "$type already reported, please wait 1 day between reporting $type"
+            'error' => ucfirst($type) . " already reported, please wait 1 day between reporting $type"
         ], 400) : false;
     }
 }
