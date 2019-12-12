@@ -35,7 +35,7 @@ Route::prefix('v1')->group(function () {
             Route::get('engagement', 'EngagementScoreController')->name('user.engagement');
             Route::get('recommendations', 'RecommendationsController')->name('user.recommendations');
             Route::get('feed', 'FeedController')->name('user.feed');
-            // TODO: Create approve/decline request routes
+            Route::get('blocked', 'BlockController@blocks')->name('user.blocked');
             Route::prefix('follower')->group(function () {
                 Route::get('requests', 'FollowingRequestController@requests')->name('user.follower.requests');
                 Route::post('approve/{id}', 'FollowingRequestController@approve')->name('user.follower.approve');

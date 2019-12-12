@@ -10,6 +10,20 @@ use Validator;
 class BlockController extends Controller
 {
     /**
+     * Get resources from storage.
+     *
+     * @param \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function blocks(Request $request)
+    {
+        // Get profiles blocked
+        return response()->json(
+            auth()->user()->blocks()->get()
+        );
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param \Illuminate\Http\Request  $request
@@ -63,7 +77,7 @@ class BlockController extends Controller
         if (!$block) {
             return $this->unauthorized();
         }
-        
+
         $block->delete();
         return response()->json('success', 204);
     }

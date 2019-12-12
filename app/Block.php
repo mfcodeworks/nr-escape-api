@@ -17,7 +17,7 @@ class Block extends Model
     ];
 
     public function blockedUser() {
-        return $this->belongsTo('App\User', 'user');
+        return $this->belongsTo('App\User', 'blocked_user');
     }
 
     public function user() {
