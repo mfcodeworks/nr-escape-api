@@ -26,6 +26,9 @@ class FollowingRequestController extends Controller
                 $followingRequest->approve()
             );
         }
+        return response()->json([
+            'error' => 'Cannot approve request'
+        ], 401);
     }
 
     /**
@@ -46,6 +49,9 @@ class FollowingRequestController extends Controller
                 $followingRequest->decline()
             );
         }
+        return response()->json([
+            'error' => 'Cannot decline request'
+        ], 401);
     }
 
     /**
@@ -63,7 +69,7 @@ class FollowingRequestController extends Controller
 
     /**
      * Return if user has requested to follow profile
-     * 
+     *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response

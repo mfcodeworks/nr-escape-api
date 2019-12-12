@@ -26,15 +26,16 @@ class FollowingRequest extends Following
     // Model functions
 
     public function approve() {
-        $follow = Following::create([
+        $follow = new Following;
+        $follow->fill([
             'user' => $this->user,
             'following_user' => $this->following_user,
-        ]);
-        FollowingRequest::delete($this->id);
+        ])->save();
+        $this->delete();
         return $follow;
     }
 
     public function decline() {
-        return FollowingRequest::delete($this->id);
+        return $this->delete();
     }
 }
