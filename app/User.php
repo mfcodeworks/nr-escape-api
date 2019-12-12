@@ -112,7 +112,8 @@ class User extends Authenticatable
 
     // Return this users following
     public function following() {
-        return $this->hasMany('App\Following', 'user');
+        return $this->hasMany('App\Following', 'user')
+            ->with('followingUser');
     }
 
     // Return this users following requests
@@ -122,7 +123,8 @@ class User extends Authenticatable
 
     // Return this users followers
     public function followers() {
-        return $this->hasMany('App\Following', 'following_user');
+        return $this->hasMany('App\Following', 'following_user')
+            ->with('author');
     }
 
     // Return the reports this user has made
@@ -140,7 +142,8 @@ class User extends Authenticatable
 
     // Return blocks by this user
     public function blocks() {
-        return $this->hasMany('App\Block', 'user');
+        return $this->hasMany('App\Block', 'user')
+            ->with('blockedUser');
     }
 
     // Return block of this user
