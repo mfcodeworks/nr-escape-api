@@ -64,13 +64,13 @@ class ProfileController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param int $id
+     * @param string $username
      * @param \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function posts(Request $request, $id) {
-        $user = User::findOrFail($id);
-        $posts = Post::where('author', $id)
+    public function posts(Request $request, $username) {
+        $user = User::where('username', '=', $username)->first();
+        $posts = Post::where('author', $user->id)
             ->latest()
             ->limit(15);
 
