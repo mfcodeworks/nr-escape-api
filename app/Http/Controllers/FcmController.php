@@ -31,6 +31,8 @@ class FcmController extends Controller
         // Get group key if existing
         $groupToken = $user->fcm_token;
 
+        Log::alert("Creating group {$groupName} for user {$user->username} with token {$token}");
+
         // If group token add, otherwise create
         $key = ($groupToken)
             ? FCMGroup::addToGroup($groupName, $groupToken, [$token])

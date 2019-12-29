@@ -7,6 +7,7 @@ use App\Notification;
 use App\Events\NewPostLike;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\Log;
 
 class CreateLikeNotification implements ShouldQueue
 {
@@ -28,6 +29,8 @@ class CreateLikeNotification implements ShouldQueue
      */
     public function handle(NewPostLike $event)
     {
+        Log::alert("Creating new like in-app notification");
+
         // Get related users
         $to = Post::findOrFail($event->like->post)
             ->author()
