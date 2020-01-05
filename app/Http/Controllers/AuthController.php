@@ -93,7 +93,7 @@ class AuthController extends Controller
 
             // Return successful response
             return response()->json([
-                'token' => auth()->user()->createToken(env('APP_NAME', 'Escape'))->accessToken,
+                'token' => auth()->user()->createToken(env('APP_NAME', 'Escape'), ['*'])->accessToken,
                 'email' => auth()->user()->email,
                 'settings' => auth()->user()->settings,
                 'profile' => auth()->user()->makeVisible(['fcm_token', 'email'])
@@ -113,6 +113,7 @@ class AuthController extends Controller
     public function user(Request $request) {
         // Return user with hidden data
         if (auth()->user()->can('view', auth()->user())) {
+            // TODO: Show info based on token permissions
             return response()->json(
                 auth()->user()->makeVisible(['fcm_token', 'email'])
             );

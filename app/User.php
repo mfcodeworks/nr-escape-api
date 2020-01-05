@@ -83,6 +83,17 @@ class User extends Authenticatable
         'contact_info' => 'array'
     ];
 
+    /**
+     * Find the user instance for the given username.
+     *
+     * @param  string  $username
+     * @return \App\User
+     */
+    public function findForPassport($username)
+    {
+        return $this->where('username', $username)->first();
+    }
+
     // Return notifications for this user
     public function notifications() {
         return $this->hasMany('App\Notification', 'for_author');

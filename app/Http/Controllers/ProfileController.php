@@ -73,12 +73,18 @@ class ProfileController extends Controller
         $posts = Post::where('author', $user->id)
             ->latest()
             ->limit(15);
+        if ($request->offset) {
+            $posts = $posts->where('id', '<', $request->offset);
+        }
 
-        if (auth()->user()->can('view', $user)) {
-            if ($request->offset) {
-                $posts = $posts->where('id', '<', $request->offset);
-            }
-
+        if (auth()->user()->username === $username) {
+            // Select posts by user or return error
+            return $request->user()->tokenCan('view-posts')
+                ? response()->json($posts->get())
+                : response()->json([
+                    'error' => 'Unauthorized access, requires the \'view-posts\' permission from user'
+                ], 401);
+        } else if (auth()->user()->can('view', $user)) {
             // Select posts by user ID
             return response()->json($posts->get());
         }
