@@ -20,6 +20,7 @@ class CheckAccountStatus
         if(!auth()->user()) {
             return $next($request);
         }
+
         // Check if user account is deactivated
         else if (auth()->user()->deactivated) {
             return response()->json([

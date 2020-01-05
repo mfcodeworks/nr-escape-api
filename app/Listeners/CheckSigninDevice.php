@@ -46,28 +46,38 @@ class CheckSigninDevice implements ShouldQueue
          */
         if (!$agent['robot']) {
             // Check if any similar device
-            Device::where('user_id', $agent['user_id'])
-                ->where('device', $agent['device'])
+            Device::where('user_id', '=', $agent['user_id'])
+                ->where('device', '=', $agent['device'])
                 ->where(function($q) use ($agent) {
                     $q->where('ip', $agent['ip'])
                         ->orWhere(function($r) use ($agent) {
                             $r->where('platform', $agent['platform'])
                                 ->where('browser', $agent['browser']);
                         });
-                })
-                ->first();
+                })->first();
 
-            // Send unknown device email
+            // Setup email
             $user = User::findOrFail($agent['user_id']);
             $beautymail = app()->make('Snowfire\Beautymail\Beautymail');
-            $beautymail->send('emails.unknown-device', ['agent' => $agent], function($message) use ($user) {
-                $message->from('mua@nygmarosebeauty.com', 'NR Escape')
-                    ->to($user->email, $user->username)
-                    ->subject('Escape unknown device login');
-            });
 
-            // Save device
-            Device::create($agent);
+            if (!$device) {
+                // Send unknown device email
+                $beautymail->send('emails.unknown-device', ['agent' => $agent], function($message) use ($user) {
+                    $message->from('mua@nygmarosebeauty.com', 'NR Escape')
+                        ->to($user->email, $user->username)
+                        ->subject('Escape unknown device login');
+                });
+
+                // Save device
+                Device::create($agent);
+            } else {
+                // Send known device email
+                $beautymail->send('emails.unknown-device', ['agent' => $agent], function($message) use ($user) {
+                    $message->from('mua@nygmarosebeauty.com', 'NR Escape')
+                        ->to($user->email, $user->username)
+                        ->subject('Escape new login');
+                });
+            }
         }
     }
 }
