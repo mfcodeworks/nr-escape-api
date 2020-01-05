@@ -11,10 +11,15 @@
 |
 */
 
-/*
 Route::get('/', function () {
     return view('welcome');
 });
-*/
+
+Route::group(['middleware' => ['web', 'auth']], function () {
+    Route::get('/clients', function () {
+        return view('clients');
+    });
+});
+
 
 Auth::routes();
